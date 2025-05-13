@@ -23,6 +23,15 @@ Authentication will be handled by including an `X-USER-ID` header in API request
 
 ### Caching Strategy and performance tuning
 
+## Project Structure
+T.B.A
+
+## Docs Structure
+`docs/scenarios`
+Including every stories sequence diagram written using Mermaid DSL, you can use Github to preview the diagram or a online mermaid live editor https://mermaid.live/
+
+`docs/openapi.yaml`
+Based on OAS standard v3.1, include the document of each API endpoint that is available from the server and also the response examples
 
 ## Dependencies use
-
+T.B.A
