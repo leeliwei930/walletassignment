@@ -3,14 +3,16 @@ module github.com/leeliwei930/walletassignment
 go 1.23.4
 
 require (
+	ariga.io/atlas v0.32.0
 	ariga.io/atlas-go-sdk v0.7.1
 	entgo.io/ent v0.14.4
+	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
+	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.20.1
 )
 
 require (
-	ariga.io/atlas v0.32.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
@@ -20,6 +22,7 @@ require (
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.18.1 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect

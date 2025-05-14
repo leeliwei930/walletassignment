@@ -1,0 +1,94 @@
+package db
+
+import (
+	"context"
+	"log/slog"
+	"os"
+
+	atlas "ariga.io/atlas/sql/migrate"
+	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/sql/schema"
+	_ "github.com/joho/godotenv/autoload"
+	"github.com/leeliwei930/walletassignment/ent/migrate"
+	"github.com/leeliwei930/walletassignment/internal/app"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
+// makeMigrateCmd represents the makeMigrate command
+var makeMigrateCmd = &cobra.Command{
+	Use:   "generate:migration <name>",
+	Short: "Formulate a migration file from a specified database and determine the target state using ent schemas",
+	Long:  `This command is responsible for creating SQL migration files from a specific database, and determining the target state using the present ent schemas`,
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		runMakeMigrateCmd(cmd, args)
+	},
+}
+
+func initConfig() {
+	viper.AutomaticEnv()
+}
+
+func init() {
+
+	cobra.OnInitialize(initConfig)
+
+	makeMigrateCmd.PersistentFlags().StringP("mode", "m", "inspect", "The migration create mode default is inspect")
+	DBMigratorCmd.AddCommand(makeMigrateCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// makeMigrateCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// makeMigrateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+}
+
+func runMakeMigrateCmd(cmd *cobra.Command, args []string) {
+
+	migrationName := &args[0]
+
+	app, err := app.InitializeFromEnv()
+	if err != nil {
+		panic(err)
+	}
+
+	ctx := context.Background()
+	// Create a local migration directory able to understand Atlas migration file format for replay.
+	dir, err := atlas.NewLocalDir("database/migrations")
+	if err != nil {
+		slog.Error("failed creating atlas migration directory: %v", err)
+		os.Exit(1)
+	}
+	// Migrate diff options.
+	opts := []schema.MigrateOption{
+		schema.WithDir(dir),                         // provide migration directory
+		schema.WithMigrationMode(schema.ModeReplay), // provide migration mode
+		schema.WithDialect(dialect.MySQL),           // Ent dialect to use
+		schema.WithIndent("    "),
+		schema.WithFormatter(atlas.DefaultFormatter),
+		schema.WithDropColumn(true),
+		schema.WithDropIndex(true),
+		schema.WithSkipChanges(
+			schema.DropTable,
+		),
+	}
+
+	if len(*migrationName) == 0 {
+		slog.Error("migration name is required. Use: 'go run -mod=mod cmd/migrate.go --name <name>'")
+		os.Exit(1)
+	}
+	// Generate migrations using Atlas support for MySQL (note the Ent dialect option passed above).
+	dbConfig := app.GetConfig().DevDBConfig
+
+	err = migrate.NamedDiff(ctx, dbConfig.Connection.AtlasDSN(), *migrationName, opts...)
+	if err != nil {
+		slog.Error("failed generating migration file: %v", err)
+		os.Exit(1)
+	}
+}
