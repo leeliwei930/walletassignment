@@ -3,7 +3,7 @@
 ### Authentication
 For this assignment, I will implement a simplified authentication approach. Since the focus is on demonstrating basic wallet functionality between users rather than security hardening, I'll use a header-based authentication method.
 
-Authentication will be handled by including an `X-USER-ID` header in API requests. This header will identify which user is making the request, allowing the system to determine appropriate access permissions for wallet operations. This approach simulates user authentication without implementing complex security measures that would be required in a production environment.
+Authentication will be handled by including an `X-PHONE-NUMBER` header in API requests. This header will identify which user is making the request, allowing the system to determine appropriate access permissions for wallet operations. This approach simulates user authentication without implementing complex security measures that would be required in a production environment.
 
 
 ### Entity relation

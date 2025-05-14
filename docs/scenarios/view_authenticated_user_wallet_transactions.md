@@ -5,9 +5,9 @@ sequenceDiagram
     participant Backend
     participant PostgresDB
 
-    Client->>Backend: GET /api/v1/wallet/:wallet_id/transactions<br/>Query Params:<br/>page: 1<br/>limit: 10<br/>Header: X-USER-ID
-    Backend->>PostgresDB: Lookup wallet_id belongs to user
-	Note over Backend: Invalid User ID
+    Client->>Backend: GET /api/v1/wallet/transactions<br/>Query Params:<br/>page: 1<br/>limit: 10<br/>Header: X-USER-PHONE
+    Backend->>PostgresDB: Retrieve user's wallet by phone number
+	Note over Backend: Invalid User phone number
 	Backend->> Client: Return Response code: 401 Unauthorized
     
 
@@ -22,9 +22,9 @@ sequenceDiagram
     participant Backend
     participant PostgresDB
 
-    Client->>Backend: GET /api/v1/wallet/:wallet_id/transactions<br/>Query Params:<br/>page: 1<br/>limit: 10<br/>Header: X-USER-ID
+    Client->>Backend: GET /api/v1/wallet/transactions<br/>Query Params:<br/>page: 1<br/>limit: 10<br/>Header: X-USER-PHONE
     Backend->>PostgresDB: Lookup wallet_id belongs to user
-    PostgresDB-->>Backend: Return wallet account record
+    PostgresDB-->>Backend: Retrieve user's wallet by phone number
     Backend->>PostgresDB: Get total count of transactions
     PostgresDB-->>Backend: Return total count
     Backend->>PostgresDB: Get paginated transactions<br/>(offset: (page-1)*limit,<br/>limit: limit)

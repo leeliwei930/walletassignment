@@ -7,10 +7,10 @@ sequenceDiagram
     participant Backend
     participant PostgresDB
 
-    Client->>Backend: POST /api/v1/wallet/deposit<br/>(amount)<br/>Header: X-USER-ID
+    Client->>Backend: POST /api/v1/wallet/deposit<br/>(amount)<br/>Header: X-USER-PHONE
     Backend->>Backend: Validate deposit amount
     Backend->>PostgresDB: Begin Transaction
-    Backend->>PostgresDB: Lookup  wallet_id belongs to user
+    Backend->>PostgresDB: Retrieve user's wallet account
     PostgresDB-->>Backend: Return wallet account record
     Backend->>Backend: Calculate new balance after deposit
     Note over Backend,PostgresDB: Transaction Block

@@ -1,0 +1,355 @@
+openapi: 3.1.0
+info:
+  title: Wallet API
+  version: '1.0.0'
+  description: API for managing digital wallet operations including deposits, withdrawals, transfers, and balance inquiries.
+
+servers:
+  - url: http://localhost:8009/api/v1
+    description: Version 1 of the Wallet API
+
+components:
+  schemas:
+    Wallet:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        balance:
+          type: integer
+          description: Balance in cents
+          example: 12000
+        formattedBalance:
+          type: string
+          example: "MYR 120.00"
+        currency:
+          type: string
+          example: "MYR"
+    
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        amount:
+          type: integer
+          description: Amount in cents
+          example: 12000
+        formattedAmount:
+          type: string
+          example: "MYR 120.00"
+        type:
+          type: string
+          enum: [deposit, withdrawal, transfer_in, transfer_out]
+        description:
+          type: string
+          example: "Deposit to Wallet"
+        createdAt:
+          type: string
+          format: date-time
+    
+    Error:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          example: "ERR_DEPOSIT_10001"
+        message:
+          type: string
+          example: "Invalid deposit amount"
+
+    PaginationInfo:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+          example: 1
+        totalPages:
+          type: integer
+          example: 5
+        totalItems:
+          type: integer
+          example: 50
+        limit:
+          type: integer
+          example: 10
+        hasNext:
+          type: boolean
+          example: true
+        hasPrev:
+          type: boolean
+          example: false
+
+  securitySchemes:
+    UserPhoneHeader:
+      type: apiKey
+      in: header
+      name: X-USER-PHONE
+      description: Phone number of the authenticated user
+
+security:
+  - UserPhoneHeader: []
+
+paths:
+  /wallet/status:
+    get:
+      summary: Get wallet status
+      description: Retrieve the current wallet balance and status for the authenticated user
+      responses:
+        '200':
+          description: Successful wallet status retrieval
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  wallet:
+                    $ref: '#/components/schemas/Wallet'
+              example:
+                wallet:
+                  id: "550e8400-e29b-41d4-a716-446655440000"
+                  balance: 12000
+                  formattedBalance: "RM 120.00"
+        '404':
+          description: Wallet not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                errorCode: "ERR_WALLET_10001"
+                message: "Invalid account"
+
+  /wallet/deposit:
+    post:
+      summary: Deposit money into wallet
+      description: Deposit money into the authenticated user's wallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: integer
+                  description: Amount to deposit in cents
+                  example: 12000
+      responses:
+        '200':
+          description: Successful deposit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  wallet:
+                    $ref: '#/components/schemas/Wallet'
+                  transaction:
+                    $ref: '#/components/schemas/Transaction'
+              example:
+                success: true
+                wallet:
+                  id: "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+                  balance: 3120
+                  currency: "MYR"
+                transaction:
+                  id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                  amount: 120
+                  description: "Deposit to John's Wallet"
+        '400':
+          description: Invalid deposit amount
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                errorCode: "ERR_DEPOSIT_10001"
+                message: "Invalid deposit amount"
+
+  /wallet/withdraw:
+    post:
+      summary: Withdraw money from wallet
+      description: Withdraw money from the authenticated user's wallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: integer
+                  description: Amount to withdraw in cents
+                  example: 12000
+      responses:
+        '200':
+          description: Successful withdrawal
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  wallet:
+                    $ref: '#/components/schemas/Wallet'
+                  transaction:
+                    $ref: '#/components/schemas/Transaction'
+              example:
+                wallet:
+                  amount: 12000
+                  formattedAmount: "MYR 120"
+                transaction:
+                  id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+                  amount: 200
+                  formattedAmount: "MYR 2.00"
+                  description: "Balance withdrawal from wallet"
+        '400':
+          description: Invalid withdrawal request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                insufficientBalance:
+                  value:
+                    errorCode: "ERR_WITHDRAW_10001"
+                    message: "Insufficient balance"
+                invalidAmount:
+                  value:
+                    errorCode: "ERR_WITHDRAW_10003"
+                    message: "A minimum of 1 cent is required to perform withdrawal"
+
+  /wallet/transfer:
+    post:
+      summary: Transfer money to another user
+      description: Transfer money from the authenticated user's wallet to another user's wallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - recipientPhoneNumber
+                - description
+              properties:
+                amount:
+                  type: integer
+                  description: Amount to transfer in cents
+                  example: 12000
+                recipientPhoneNumber:
+                  type: string
+                  example: "+60123456789"
+                description:
+                  type: string
+                  example: "Payment for lunch"
+      responses:
+        '200':
+          description: Successful transfer
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  wallet:
+                    $ref: '#/components/schemas/Wallet'
+                  transaction:
+                    $ref: '#/components/schemas/Transaction'
+              example:
+                wallet:
+                  balance: 190000
+                  formattedBalance: "MYR 1900"
+                transaction:
+                  amount: 190
+                  description: "Balance transfer to User B"
+        '400':
+          description: Invalid transfer request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                selfTransfer:
+                  value:
+                    errorCode: "ERR_TRANSFER_10001"
+                    message: "Recipient phone number must not be identical as sender"
+                insufficientBalance:
+                  value:
+                    errorCode: "ERR_TRANSFER_10003"
+                    message: "Insufficient balance for transfer"
+        '404':
+          description: Recipient not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                errorCode: "ERR_TRANSFER_10002"
+                message: "Invalid recipient phone number"
+
+  /wallet/transactions:
+    get:
+      summary: Get wallet transactions
+      description: Retrieve paginated transaction history for the authenticated user's wallet
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for pagination
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          description: Number of items per page
+      responses:
+        '200':
+          description: Successful retrieval of transactions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Transaction'
+                  pagination:
+                    $ref: '#/components/schemas/PaginationInfo'
+              example:
+                data:
+                  - id: "05c31cfa-c671-4b8f-9c25-77296d56d2ed"
+                    amount: 100
+                    type: "deposit"
+                    description: "Deposit to Wallet"
+                    createdAt: "2024-03-20T10:00:00Z"
+                pagination:
+                  currentPage: 1
+                  totalPages: 5
+                  totalItems: 50
+                  limit: 10
+                  hasNext: true
+                  hasPrev: false
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                errorCode: "ERR_AUTH_10001"
+                message: "Unauthorized access"
