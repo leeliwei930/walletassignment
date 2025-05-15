@@ -16,12 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type ApplicationVersion struct {
-	CommitSHA       string
-	BuildReleaseTag string
-}
-
-func Start(appVersion *ApplicationVersion) {
+func Start() {
 	ec := echo.New()
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
@@ -52,7 +47,7 @@ func Start(appVersion *ApplicationVersion) {
 
 		err := ec.Start(fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port))
 		if err != nil {
-			log.Fatal("Unable to start server")
+			log.Fatal("Shutting down server", zap.Error(err))
 		}
 	}()
 	<-ctx.Done()
