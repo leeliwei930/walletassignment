@@ -50,9 +50,10 @@ components:
         description:
           type: string
           example: "Deposit to Wallet"
-        createdAt:
+        timestamp:
           type: string
           format: date-time
+          example: "2024-03-20T10:00:00Z"
     
     Error:
       type: object
@@ -118,6 +119,7 @@ paths:
                   id: "550e8400-e29b-41d4-a716-446655440000"
                   balance: 12000
                   formattedBalance: "RM 120.00"
+                  currency: "MYR"
         '404':
           description: Wallet not found
           content:
@@ -167,10 +169,12 @@ paths:
                   id: "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
                   balance: 3120
                   currency: "MYR"
+                  formattedBalance: "RM 31.20"
                 transaction:
                   id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
                   amount: 120
                   description: "Deposit to John's Wallet"
+                  timestamp: "2024-03-20T10:00:00Z"
         '400':
           description: Invalid deposit amount
           content:
@@ -215,12 +219,14 @@ paths:
               example:
                 wallet:
                   amount: 12000
-                  formattedAmount: "MYR 120"
+                  currency: "MYR"
+                  formattedBalance: "RM 120.00"
                 transaction:
                   id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
                   amount: 200
                   formattedAmount: "MYR 2.00"
                   description: "Balance withdrawal from wallet"
+                  timestamp: "2024-03-20T10:00:00Z"
         '400':
           description: Invalid withdrawal request
           content:
@@ -283,6 +289,7 @@ paths:
                 transaction:
                   amount: 190
                   description: "Balance transfer to User B"
+                  timestamp: "2024-03-20T10:00:00Z"
         '400':
           description: Invalid transfer request
           content:
@@ -350,7 +357,7 @@ paths:
                     amount: 100
                     type: "deposit"
                     description: "Deposit to Wallet"
-                    createdAt: "2024-03-20T10:00:00Z"
+                    timestamp: "2024-03-20T10:00:00Z"
                 pagination:
                   currentPage: 1
                   totalPages: 5
