@@ -8,6 +8,10 @@ servers:
   - url: http://localhost:8009/api/v1
     description: Version 1 of the Wallet API
 
+tags:
+  - name: Wallet
+    description: API for managing digital wallet operations
+
 components:
   schemas:
     Wallet:
@@ -97,6 +101,8 @@ paths:
     get:
       summary: Get wallet status
       description: Retrieve the current wallet balance and status for the authenticated user
+      tags:
+        - Wallet
       responses:
         '200':
           description: Successful wallet status retrieval
@@ -126,6 +132,8 @@ paths:
     post:
       summary: Deposit money into wallet
       description: Deposit money into the authenticated user's wallet
+      tags:
+        - Wallet
       requestBody:
         required: true
         content:
@@ -177,6 +185,8 @@ paths:
     post:
       summary: Withdraw money from wallet
       description: Withdraw money from the authenticated user's wallet
+      tags:
+        - Wallet
       requestBody:
         required: true
         content:
@@ -231,6 +241,8 @@ paths:
     post:
       summary: Transfer money to another user
       description: Transfer money from the authenticated user's wallet to another user's wallet
+      tags:
+        - Wallet
       requestBody:
         required: true
         content:
@@ -300,6 +312,8 @@ paths:
     get:
       summary: Get wallet transactions
       description: Retrieve paginated transaction history for the authenticated user's wallet
+      tags:
+        - Wallet
       parameters:
         - name: page
           in: query

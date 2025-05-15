@@ -15,6 +15,11 @@ func (app *application) Routes(ec *echo.Echo) *echo.Echo {
 	walletHandler := handlers.NewWalletHandler(app)
 
 	wallet.GET("/health", walletHandler.Health)
+	wallet.GET("/status", walletHandler.Status)
+	wallet.POST("/deposit", walletHandler.Deposit)
+	wallet.POST("/withdraw", walletHandler.Withdraw)
+	wallet.POST("/transfer", walletHandler.Transfer)
+	wallet.GET("/transactions", walletHandler.GetTransactions)
 
 	return ec
 }
