@@ -1,4 +1,4 @@
-package handlers
+package wallet
 
 import (
 	"github.com/labstack/echo/v4"

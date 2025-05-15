@@ -1,13 +1,13 @@
 package handlers
 
-import "github.com/leeliwei930/walletassignment/internal/interfaces"
+import (
+	"github.com/leeliwei930/walletassignment/internal/interfaces"
+)
 
-type WalletHandler struct {
+type Handler struct {
 	app interfaces.Application
 }
 
-func NewWalletHandler(app interfaces.Application) *WalletHandler {
-	return &WalletHandler{
-		app: app,
-	}
+func NewHandler(app interfaces.Application) *Handler {
+	return &Handler{app: app}
 }
