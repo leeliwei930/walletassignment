@@ -1,9 +1,8 @@
 package app
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
+	"github.com/leeliwei930/walletassignment/internal/app/handlers"
 )
 
 func (app *application) Routes(ec *echo.Echo) *echo.Echo {
@@ -13,11 +12,9 @@ func (app *application) Routes(ec *echo.Echo) *echo.Echo {
 
 	wallet := v1.Group("/wallet")
 
-	wallet.GET("/health", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, map[string]string{
-			"status": "ok",
-		})
-	})
+	walletHandler := handlers.NewWalletHandler(app)
+
+	wallet.GET("/health", walletHandler.Health)
 
 	return ec
 }
