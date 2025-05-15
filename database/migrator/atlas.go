@@ -107,7 +107,14 @@ func (dbm *AtlasDBMigrator) RollbackMigration(ctx context.Context, targetVersion
 func (dbm *AtlasDBMigrator) RehashMigration(ctx context.Context) error {
 	client := dbm.atlasClient
 
-	return client.MigrateHash(ctx, &atlasexec.MigrateHashParams{})
+	dir, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	return client.MigrateHash(ctx, &atlasexec.MigrateHashParams{
+		DirURL: "file://" + dir + "/database/migrations",
+	})
 }
 
 func (dbm *AtlasDBMigrator) PendingMigrationCheck(ctx context.Context) error {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/leeliwei930/walletassignment/constant"
@@ -38,21 +39,21 @@ var dbmigrateCmd = &cobra.Command{
 
 		environment := viper.GetString(constant.APP_ENV)
 		if isDryRun {
-			slog.Info("Execute migration in dry-run mode on %s environment: ", environment)
+			slog.Info("Execute migration in dry-run mode on", "environment", environment)
 		} else {
-			slog.Info("Execute migration on %s environment: ", environment)
-
+			slog.Info("Execute migration", "environment", environment)
 		}
 
 		applyMigrationResult, err := dbMigrator.ApplyMigration(ctx, targetVersion, isDryRun)
 		if err != nil {
 			slog.Error(err.Error())
+			os.Exit(1)
 		}
 
 		messages := ""
 		if len(applyMigrationResult.Applied) == 0 {
 			slog.Info("Atlas: No new migrations to apply")
-			return
+			os.Exit(0)
 		} else {
 			messages += "Atlas: Applied Migrations: \n"
 			for idx, migration := range applyMigrationResult.Applied {

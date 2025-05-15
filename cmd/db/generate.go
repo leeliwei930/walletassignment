@@ -70,11 +70,17 @@ func runMakeMigrateCmd(cmd *cobra.Command, args []string) {
 	devDBConfig := app.GetConfig().DevDBConfig
 	dialect := devDBConfig.Connection.EntDialect()
 
+	var migrationMode schema.Mode
+	migrationMode = schema.ModeInspect
+	migrationModeStr, _ := cmd.Flags().GetString("mode")
+	if migrationModeStr == "replay" {
+		migrationMode = schema.ModeReplay
+	}
 	// Migrate diff options.
 	opts := []schema.MigrateOption{
-		schema.WithDir(dir),                         // provide migration directory
-		schema.WithMigrationMode(schema.ModeReplay), // provide migration mode
-		schema.WithDialect(dialect),                 // Ent dialect to use
+		schema.WithDir(dir),                     // provide migration directory
+		schema.WithMigrationMode(migrationMode), // provide migration mode
+		schema.WithDialect(dialect),             // Ent dialect to use
 		schema.WithIndent("    "),
 		schema.WithFormatter(atlas.DefaultFormatter),
 		schema.WithDropColumn(true),
