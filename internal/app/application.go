@@ -6,6 +6,7 @@ import (
 	"github.com/leeliwei930/walletassignment/config"
 	"github.com/leeliwei930/walletassignment/ent"
 	"github.com/leeliwei930/walletassignment/internal/interfaces"
+	"go.uber.org/zap"
 )
 
 type application struct {
@@ -13,6 +14,7 @@ type application struct {
 	db         *sql.DB
 	config     *config.Config
 	dbMigrator interfaces.DBMigrator
+	log        *zap.Logger
 }
 
 func New() *application {
@@ -25,6 +27,10 @@ func (app *application) GetEnt() *ent.Client {
 
 func (app *application) GetDB() *sql.DB {
 	return app.db
+}
+
+func (app *application) GetLog() *zap.Logger {
+	return app.log
 }
 
 func (app *application) GetConfig() *config.Config {

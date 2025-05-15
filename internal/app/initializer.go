@@ -34,6 +34,7 @@ func InitializeFromEnv(opts ...InitializeOpts) (*application, error) {
 
 	err = initializeAll(
 		app.initializeConfigIfNeeded(),
+		app.InitLogger(),
 		app.InitEntClient(),
 	)
 	if err != nil {

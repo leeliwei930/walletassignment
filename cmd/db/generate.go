@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"log/slog"
 	"os"
 
 	atlas "ariga.io/atlas/sql/migrate"
@@ -12,6 +11,7 @@ import (
 	"github.com/leeliwei930/walletassignment/internal/app"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 // makeMigrateCmd represents the makeMigrate command
@@ -59,11 +59,12 @@ func runMakeMigrateCmd(cmd *cobra.Command, args []string) {
 
 	// Generate migrations using Atlas support for MySQL (note the Ent dialect option passed above).
 	dbConfig := app.GetConfig().DevDBConfig
+	log := app.GetLog()
 	ctx := context.Background()
 	// Create a local migration directory able to understand Atlas migration file format for replay.
 	dir, err := atlas.NewLocalDir("database/migrations")
 	if err != nil {
-		slog.Error("failed creating atlas migration directory: %v", err)
+		log.Error("failed creating atlas migration directory", zap.Error(err))
 		os.Exit(1)
 	}
 
@@ -91,13 +92,13 @@ func runMakeMigrateCmd(cmd *cobra.Command, args []string) {
 	}
 
 	if len(*migrationName) == 0 {
-		slog.Error("migration name is required. Use: 'go run -mod=mod cmd/migrate.go --name <name>'")
+		log.Error("migration name is required. Use: 'go run -mod=mod cmd/migrate.go --name <name>'")
 		os.Exit(1)
 	}
 
 	err = migrate.NamedDiff(ctx, dbConfig.Connection.AtlasDSN(), *migrationName, opts...)
 	if err != nil {
-		slog.Error("failed generating migration file: %v", err)
+		log.Error("failed generating migration file", zap.Error(err))
 		os.Exit(1)
 	}
 }

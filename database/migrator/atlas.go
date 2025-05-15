@@ -3,10 +3,10 @@ package migrator
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"os"
 
 	"ariga.io/atlas-go-sdk/atlasexec"
+	"go.uber.org/zap"
 
 	"github.com/leeliwei930/walletassignment/internal/errors"
 	"github.com/leeliwei930/walletassignment/internal/interfaces"
@@ -36,16 +36,17 @@ func NewAtlasDBMigrator(app interfaces.Application) interfaces.DBMigrator {
 			os.DirFS("./database/migrations"),
 		),
 	)
+	log := app.GetLog()
 
 	if err != nil {
-		slog.Error(errors.UnexpectedError(pkgerrors.Wrap(err, "Atlas database migration directory error")).Error())
+		log.Error("Atlas database migration directory error", zap.Error(err))
 		os.Exit(1)
 		return nil
 	}
 
 	client, err := atlasexec.NewClient(migrationDir.Path(), "atlas")
 	if err != nil {
-		slog.Error(errors.UnexpectedError(pkgerrors.Wrap(err, "Atlas database migration client setup error")).Error())
+		log.Error("Atlas database migration client setup error", zap.Error(err))
 		os.Exit(1)
 		return nil
 	}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/leeliwei930/walletassignment/config"
 	"github.com/leeliwei930/walletassignment/ent"
+	"go.uber.org/zap"
 )
 
 type Application interface {
@@ -13,6 +14,7 @@ type Application interface {
 	GetDB() *sql.DB
 	GetConfig() *config.Config
 	GetDBMigrator() DBMigrator
+	GetLog() *zap.Logger
 	Close()
 	WrapRefreshDatabaseTransaction(ctx context.Context, fn func()) error
 }

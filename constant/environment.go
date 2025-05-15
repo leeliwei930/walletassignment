@@ -1,5 +1,7 @@
 package constant
 
+const CORS_ALLOWED_ORIGINS = "CORS_ALLOWED_ORIGINS"
+
 // Application environment variable keys
 const APP_DEBUG = "APP_DEBUG"
 const APP_ENV = "APP_ENV"

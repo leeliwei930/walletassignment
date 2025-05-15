@@ -1,0 +1,100 @@
+package response
+
+import (
+	"fmt"
+	"net/http"
+	"strings"
+
+	"github.com/labstack/echo/v4"
+	"github.com/leeliwei930/walletassignment/internal/interfaces"
+	"github.com/pkg/errors"
+)
+
+const JSON_DEFAULT_INDENT_FORMAT = "  "
+
+type Responder interface {
+	AbortIfIncorrectJsonPayload(ec echo.Context, err error) error
+	UnexpectedError(ec echo.Context, err error) error
+	BadRequestError(ec echo.Context, err error) error
+	JSON(ec echo.Context, statusCode int, data any, indent string) error
+}
+
+type JSONResponse struct {
+	StatusCode string `json:"statusCode,omitempty"`
+	Data       any    `json:"data,omitempty"`
+}
+
+type ErrorResponse struct {
+	StatusCode string            `json:"statusCode,omitempty"`
+	Message    string            `json:"message"`
+	StackTrace []string          `json:"stackTrace,omitempty"`
+	Fields     map[string]string `json:"fields,omitempty"`
+}
+
+type responder struct {
+	Context echo.Context
+	App     interfaces.Application
+}
+
+func NewResponder(ec echo.Context, app interfaces.Application) *responder {
+	return &responder{Context: ec, App: app}
+}
+
+func (h *responder) AbortIfIncorrectJsonPayload(ec echo.Context, err error) error {
+	if err != nil {
+		err = errors.WithStack(err)
+		stackTraces := fmt.Sprintf("%+v", err)
+		stackTraces = strings.ReplaceAll(stackTraces, "\t", "  ")
+
+		return h.ErrorJSON(
+			http.StatusUnprocessableEntity, ErrorResponse{
+				StatusCode: errorCodes[JSONEmptyBodyError],
+				Message:    err.Error(),
+				StackTrace: strings.Split(stackTraces, "\n"),
+			},
+		)
+	}
+	return nil
+}
+
+func (h *responder) UnexpectedError(ec echo.Context, err error) error {
+	if err != nil {
+		err = errors.WithStack(err)
+		stackTraces := fmt.Sprintf("%+v", err)
+		stackTraces = strings.ReplaceAll(stackTraces, "\t", "  ")
+
+		return h.ErrorJSON(
+			http.StatusUnprocessableEntity, ErrorResponse{
+				StatusCode: errorCodes[Unexpected],
+				Message:    err.Error(),
+				StackTrace: strings.Split(stackTraces, "\n"),
+			},
+		)
+	}
+	return nil
+}
+
+func (h *responder) BadRequestError(ec echo.Context, err error) error {
+	if err != nil {
+		err = errors.WithStack(err)
+		stackTraces := fmt.Sprintf("%+v", err)
+		stackTraces = strings.ReplaceAll(stackTraces, "\t", "  ")
+
+		return h.ErrorJSON(
+			http.StatusBadRequest, ErrorResponse{
+				StatusCode: errorCodes[BadRequestError],
+				Message:    err.Error(),
+				StackTrace: strings.Split(stackTraces, "\n"),
+			},
+		)
+	}
+	return nil
+}
+
+func (h *responder) ErrorJSON(code int, errorRes ErrorResponse) error {
+	return h.JSON(code, errorRes)
+}
+
+func (h *responder) JSON(code int, data interface{}) error {
+	return h.Context.JSONPretty(code, data, JSON_DEFAULT_INDENT_FORMAT)
+}
