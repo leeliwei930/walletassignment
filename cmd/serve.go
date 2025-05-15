@@ -9,8 +9,8 @@ import (
 // serveCmd represents the serve command
 var serveCmd = &cobra.Command{
 	Use:   "serve",
-	Short: "Initiate the pawswinq application's backend server",
-	Long:  `Launches the backend server for the pawswinq application. The server will begin on the port defined in the .env file.`,
+	Short: "Initiate the wallet assignment application's backend server",
+	Long:  `Launches the backend server for the wallet assignment application. The server will begin on the port defined in the .env file.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		server.Start()
