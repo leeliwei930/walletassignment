@@ -218,7 +218,7 @@ paths:
                     $ref: '#/components/schemas/Transaction'
               example:
                 wallet:
-                  amount: 12000
+                  balance: 12000
                   currency: "MYR"
                   formattedBalance: "RM 120.00"
                 transaction:
