@@ -13,4 +13,5 @@ type DBConnection interface {
 	Driver() string
 	DSN() string
 	AtlasDSN() string
+	EntDialect() string
 }

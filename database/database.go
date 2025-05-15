@@ -28,7 +28,7 @@ func BuildSQLDriver(config *config.DBConnectionConfig) (*entSQL.Driver, error) {
 	db.SetMaxOpenConns(config.MaxOpenConns)
 	db.SetConnMaxLifetime(config.ConnectionMaxLifeTime)
 
-	drv := entSQL.OpenDB(config.Connection.Driver(), db)
+	drv := entSQL.OpenDB(config.Connection.EntDialect(), db)
 
 	return drv, nil
 }

@@ -6,7 +6,6 @@ import (
 	"os"
 
 	atlas "ariga.io/atlas/sql/migrate"
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql/schema"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/leeliwei930/walletassignment/ent/migrate"
@@ -58,6 +57,8 @@ func runMakeMigrateCmd(cmd *cobra.Command, args []string) {
 		panic(err)
 	}
 
+	// Generate migrations using Atlas support for MySQL (note the Ent dialect option passed above).
+	dbConfig := app.GetConfig().DevDBConfig
 	ctx := context.Background()
 	// Create a local migration directory able to understand Atlas migration file format for replay.
 	dir, err := atlas.NewLocalDir("database/migrations")
@@ -65,11 +66,15 @@ func runMakeMigrateCmd(cmd *cobra.Command, args []string) {
 		slog.Error("failed creating atlas migration directory: %v", err)
 		os.Exit(1)
 	}
+
+	devDBConfig := app.GetConfig().DevDBConfig
+	dialect := devDBConfig.Connection.EntDialect()
+
 	// Migrate diff options.
 	opts := []schema.MigrateOption{
 		schema.WithDir(dir),                         // provide migration directory
 		schema.WithMigrationMode(schema.ModeReplay), // provide migration mode
-		schema.WithDialect(dialect.MySQL),           // Ent dialect to use
+		schema.WithDialect(dialect),                 // Ent dialect to use
 		schema.WithIndent("    "),
 		schema.WithFormatter(atlas.DefaultFormatter),
 		schema.WithDropColumn(true),
@@ -83,8 +88,6 @@ func runMakeMigrateCmd(cmd *cobra.Command, args []string) {
 		slog.Error("migration name is required. Use: 'go run -mod=mod cmd/migrate.go --name <name>'")
 		os.Exit(1)
 	}
-	// Generate migrations using Atlas support for MySQL (note the Ent dialect option passed above).
-	dbConfig := app.GetConfig().DevDBConfig
 
 	err = migrate.NamedDiff(ctx, dbConfig.Connection.AtlasDSN(), *migrationName, opts...)
 	if err != nil {
