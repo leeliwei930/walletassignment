@@ -48,8 +48,8 @@ func (app *application) WrapRefreshDatabaseTransaction(ctx context.Context, fn f
 
 	fn()
 
-	entTx.Rollback()
-	app.InitEntClient()
+	_ = entTx.Rollback()
+	_ = app.InitEntClient()
 
 	return nil
 }

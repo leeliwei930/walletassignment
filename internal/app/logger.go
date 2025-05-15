@@ -13,16 +13,14 @@ func (app *application) InitLogger() error {
 }
 
 func (app *application) buildLogger() *zap.Logger {
-	var encoderCfg zapcore.EncoderConfig
 
-	encoderCfg = zap.NewDevelopmentEncoderConfig()
+	encoderCfg := zap.NewDevelopmentEncoderConfig()
 
 	// Set time encoding to human-readable format
 	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
 	consoleEncoder := zapcore.NewConsoleEncoder(encoderCfg)
 
-	var logLevel zapcore.Level
-	logLevel = zapcore.DebugLevel
+	logLevel := zapcore.DebugLevel
 
 	stdout := zapcore.AddSync(os.Stdout)
 
