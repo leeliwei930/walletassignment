@@ -16,6 +16,7 @@ type Responder interface {
 	AbortIfIncorrectJsonPayload(ec echo.Context, err error) error
 	UnexpectedError(ec echo.Context, err error) error
 	BadRequestError(ec echo.Context, err error) error
+	UnauthorizedError(ec echo.Context, err error) error
 	JSON(ec echo.Context, statusCode int, data any, indent string) error
 }
 
@@ -89,6 +90,15 @@ func (h *responder) BadRequestError(ec echo.Context, err error) error {
 		)
 	}
 	return nil
+}
+
+func (h *responder) UnauthorizedError(ec echo.Context, err error) error {
+	return h.ErrorJSON(
+		http.StatusUnauthorized, ErrorResponse{
+			StatusCode: errorCodes[UnauthorizedError],
+			Message:    err.Error(),
+		},
+	)
 }
 
 func (h *responder) ErrorJSON(code int, errorRes ErrorResponse) error {
