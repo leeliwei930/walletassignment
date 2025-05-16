@@ -74,7 +74,7 @@ var (
 	// DefaultBalance holds the default value on creation for the "balance" field.
 	DefaultBalance int
 	// DefaultCurrencyCode holds the default value on creation for the "currency_code" field.
-	DefaultCurrencyCode int
+	DefaultCurrencyCode string
 	// DefaultDecimalPlaces holds the default value on creation for the "decimal_places" field.
 	DefaultDecimalPlaces int
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.

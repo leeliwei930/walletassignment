@@ -24,7 +24,7 @@ type Wallet struct {
 	// Balance holds the value of the "balance" field.
 	Balance int `json:"balance,omitempty"`
 	// CurrencyCode holds the value of the "currency_code" field.
-	CurrencyCode int `json:"currency_code,omitempty"`
+	CurrencyCode string `json:"currency_code,omitempty"`
 	// DecimalPlaces holds the value of the "decimal_places" field.
 	DecimalPlaces int `json:"decimal_places,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -73,8 +73,10 @@ func (*Wallet) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case wallet.FieldBalance, wallet.FieldCurrencyCode, wallet.FieldDecimalPlaces:
+		case wallet.FieldBalance, wallet.FieldDecimalPlaces:
 			values[i] = new(sql.NullInt64)
+		case wallet.FieldCurrencyCode:
+			values[i] = new(sql.NullString)
 		case wallet.FieldCreatedAt, wallet.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case wallet.FieldID, wallet.FieldUserID:
@@ -113,10 +115,10 @@ func (w *Wallet) assignValues(columns []string, values []any) error {
 				w.Balance = int(value.Int64)
 			}
 		case wallet.FieldCurrencyCode:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field currency_code", values[i])
 			} else if value.Valid {
-				w.CurrencyCode = int(value.Int64)
+				w.CurrencyCode = value.String
 			}
 		case wallet.FieldDecimalPlaces:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -189,7 +191,7 @@ func (w *Wallet) String() string {
 	builder.WriteString(fmt.Sprintf("%v", w.Balance))
 	builder.WriteString(", ")
 	builder.WriteString("currency_code=")
-	builder.WriteString(fmt.Sprintf("%v", w.CurrencyCode))
+	builder.WriteString(w.CurrencyCode)
 	builder.WriteString(", ")
 	builder.WriteString("decimal_places=")
 	builder.WriteString(fmt.Sprintf("%v", w.DecimalPlaces))

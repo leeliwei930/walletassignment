@@ -47,15 +47,15 @@ func (wc *WalletCreate) SetNillableBalance(i *int) *WalletCreate {
 }
 
 // SetCurrencyCode sets the "currency_code" field.
-func (wc *WalletCreate) SetCurrencyCode(i int) *WalletCreate {
-	wc.mutation.SetCurrencyCode(i)
+func (wc *WalletCreate) SetCurrencyCode(s string) *WalletCreate {
+	wc.mutation.SetCurrencyCode(s)
 	return wc
 }
 
 // SetNillableCurrencyCode sets the "currency_code" field if the given value is not nil.
-func (wc *WalletCreate) SetNillableCurrencyCode(i *int) *WalletCreate {
-	if i != nil {
-		wc.SetCurrencyCode(*i)
+func (wc *WalletCreate) SetNillableCurrencyCode(s *string) *WalletCreate {
+	if s != nil {
+		wc.SetCurrencyCode(*s)
 	}
 	return wc
 }
@@ -261,7 +261,7 @@ func (wc *WalletCreate) createSpec() (*Wallet, *sqlgraph.CreateSpec) {
 		_node.Balance = value
 	}
 	if value, ok := wc.mutation.CurrencyCode(); ok {
-		_spec.SetField(wallet.FieldCurrencyCode, field.TypeInt, value)
+		_spec.SetField(wallet.FieldCurrencyCode, field.TypeString, value)
 		_node.CurrencyCode = value
 	}
 	if value, ok := wc.mutation.DecimalPlaces(); ok {
@@ -392,7 +392,7 @@ func (u *WalletUpsert) AddBalance(v int) *WalletUpsert {
 }
 
 // SetCurrencyCode sets the "currency_code" field.
-func (u *WalletUpsert) SetCurrencyCode(v int) *WalletUpsert {
+func (u *WalletUpsert) SetCurrencyCode(v string) *WalletUpsert {
 	u.Set(wallet.FieldCurrencyCode, v)
 	return u
 }
@@ -400,12 +400,6 @@ func (u *WalletUpsert) SetCurrencyCode(v int) *WalletUpsert {
 // UpdateCurrencyCode sets the "currency_code" field to the value that was provided on create.
 func (u *WalletUpsert) UpdateCurrencyCode() *WalletUpsert {
 	u.SetExcluded(wallet.FieldCurrencyCode)
-	return u
-}
-
-// AddCurrencyCode adds v to the "currency_code" field.
-func (u *WalletUpsert) AddCurrencyCode(v int) *WalletUpsert {
-	u.Add(wallet.FieldCurrencyCode, v)
 	return u
 }
 
@@ -535,16 +529,9 @@ func (u *WalletUpsertOne) UpdateBalance() *WalletUpsertOne {
 }
 
 // SetCurrencyCode sets the "currency_code" field.
-func (u *WalletUpsertOne) SetCurrencyCode(v int) *WalletUpsertOne {
+func (u *WalletUpsertOne) SetCurrencyCode(v string) *WalletUpsertOne {
 	return u.Update(func(s *WalletUpsert) {
 		s.SetCurrencyCode(v)
-	})
-}
-
-// AddCurrencyCode adds v to the "currency_code" field.
-func (u *WalletUpsertOne) AddCurrencyCode(v int) *WalletUpsertOne {
-	return u.Update(func(s *WalletUpsert) {
-		s.AddCurrencyCode(v)
 	})
 }
 
@@ -855,16 +842,9 @@ func (u *WalletUpsertBulk) UpdateBalance() *WalletUpsertBulk {
 }
 
 // SetCurrencyCode sets the "currency_code" field.
-func (u *WalletUpsertBulk) SetCurrencyCode(v int) *WalletUpsertBulk {
+func (u *WalletUpsertBulk) SetCurrencyCode(v string) *WalletUpsertBulk {
 	return u.Update(func(s *WalletUpsert) {
 		s.SetCurrencyCode(v)
-	})
-}
-
-// AddCurrencyCode adds v to the "currency_code" field.
-func (u *WalletUpsertBulk) AddCurrencyCode(v int) *WalletUpsertBulk {
-	return u.Update(func(s *WalletUpsert) {
-		s.AddCurrencyCode(v)
 	})
 }
 

@@ -20,7 +20,7 @@ func (Wallet) Fields() []ent.Field {
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
 		field.UUID("user_id", uuid.UUID{}),
 		field.Int("balance").Default(0),
-		field.Int("currency_code").Default(10),
+		field.String("currency_code").Default("RM"),
 		field.Int("decimal_places").Default(2),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),

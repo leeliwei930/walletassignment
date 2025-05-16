@@ -73,7 +73,7 @@ func init() {
 	// walletDescCurrencyCode is the schema descriptor for currency_code field.
 	walletDescCurrencyCode := walletFields[3].Descriptor()
 	// wallet.DefaultCurrencyCode holds the default value on creation for the currency_code field.
-	wallet.DefaultCurrencyCode = walletDescCurrencyCode.Default.(int)
+	wallet.DefaultCurrencyCode = walletDescCurrencyCode.Default.(string)
 	// walletDescDecimalPlaces is the schema descriptor for decimal_places field.
 	walletDescDecimalPlaces := walletFields[4].Descriptor()
 	// wallet.DefaultDecimalPlaces holds the default value on creation for the decimal_places field.

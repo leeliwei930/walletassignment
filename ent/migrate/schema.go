@@ -80,7 +80,7 @@ var (
 	WalletsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "balance", Type: field.TypeInt, Default: 0},
-		{Name: "currency_code", Type: field.TypeInt, Default: 10},
+		{Name: "currency_code", Type: field.TypeString, Default: "RM"},
 		{Name: "decimal_places", Type: field.TypeInt, Default: 2},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},

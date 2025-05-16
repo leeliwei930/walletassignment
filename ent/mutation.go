@@ -1373,8 +1373,7 @@ type WalletMutation struct {
 	id                *uuid.UUID
 	balance           *int
 	addbalance        *int
-	currency_code     *int
-	addcurrency_code  *int
+	currency_code     *string
 	decimal_places    *int
 	adddecimal_places *int
 	created_at        *time.Time
@@ -1587,13 +1586,12 @@ func (m *WalletMutation) ResetBalance() {
 }
 
 // SetCurrencyCode sets the "currency_code" field.
-func (m *WalletMutation) SetCurrencyCode(i int) {
-	m.currency_code = &i
-	m.addcurrency_code = nil
+func (m *WalletMutation) SetCurrencyCode(s string) {
+	m.currency_code = &s
 }
 
 // CurrencyCode returns the value of the "currency_code" field in the mutation.
-func (m *WalletMutation) CurrencyCode() (r int, exists bool) {
+func (m *WalletMutation) CurrencyCode() (r string, exists bool) {
 	v := m.currency_code
 	if v == nil {
 		return
@@ -1604,7 +1602,7 @@ func (m *WalletMutation) CurrencyCode() (r int, exists bool) {
 // OldCurrencyCode returns the old "currency_code" field's value of the Wallet entity.
 // If the Wallet object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *WalletMutation) OldCurrencyCode(ctx context.Context) (v int, err error) {
+func (m *WalletMutation) OldCurrencyCode(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCurrencyCode is only allowed on UpdateOne operations")
 	}
@@ -1618,28 +1616,9 @@ func (m *WalletMutation) OldCurrencyCode(ctx context.Context) (v int, err error)
 	return oldValue.CurrencyCode, nil
 }
 
-// AddCurrencyCode adds i to the "currency_code" field.
-func (m *WalletMutation) AddCurrencyCode(i int) {
-	if m.addcurrency_code != nil {
-		*m.addcurrency_code += i
-	} else {
-		m.addcurrency_code = &i
-	}
-}
-
-// AddedCurrencyCode returns the value that was added to the "currency_code" field in this mutation.
-func (m *WalletMutation) AddedCurrencyCode() (r int, exists bool) {
-	v := m.addcurrency_code
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetCurrencyCode resets all changes to the "currency_code" field.
 func (m *WalletMutation) ResetCurrencyCode() {
 	m.currency_code = nil
-	m.addcurrency_code = nil
 }
 
 // SetDecimalPlaces sets the "decimal_places" field.
@@ -1969,7 +1948,7 @@ func (m *WalletMutation) SetField(name string, value ent.Value) error {
 		m.SetBalance(v)
 		return nil
 	case wallet.FieldCurrencyCode:
-		v, ok := value.(int)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2007,9 +1986,6 @@ func (m *WalletMutation) AddedFields() []string {
 	if m.addbalance != nil {
 		fields = append(fields, wallet.FieldBalance)
 	}
-	if m.addcurrency_code != nil {
-		fields = append(fields, wallet.FieldCurrencyCode)
-	}
 	if m.adddecimal_places != nil {
 		fields = append(fields, wallet.FieldDecimalPlaces)
 	}
@@ -2023,8 +1999,6 @@ func (m *WalletMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case wallet.FieldBalance:
 		return m.AddedBalance()
-	case wallet.FieldCurrencyCode:
-		return m.AddedCurrencyCode()
 	case wallet.FieldDecimalPlaces:
 		return m.AddedDecimalPlaces()
 	}
@@ -2042,13 +2016,6 @@ func (m *WalletMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddBalance(v)
-		return nil
-	case wallet.FieldCurrencyCode:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddCurrencyCode(v)
 		return nil
 	case wallet.FieldDecimalPlaces:
 		v, ok := value.(int)

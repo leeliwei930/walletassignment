@@ -67,23 +67,16 @@ func (wu *WalletUpdate) AddBalance(i int) *WalletUpdate {
 }
 
 // SetCurrencyCode sets the "currency_code" field.
-func (wu *WalletUpdate) SetCurrencyCode(i int) *WalletUpdate {
-	wu.mutation.ResetCurrencyCode()
-	wu.mutation.SetCurrencyCode(i)
+func (wu *WalletUpdate) SetCurrencyCode(s string) *WalletUpdate {
+	wu.mutation.SetCurrencyCode(s)
 	return wu
 }
 
 // SetNillableCurrencyCode sets the "currency_code" field if the given value is not nil.
-func (wu *WalletUpdate) SetNillableCurrencyCode(i *int) *WalletUpdate {
-	if i != nil {
-		wu.SetCurrencyCode(*i)
+func (wu *WalletUpdate) SetNillableCurrencyCode(s *string) *WalletUpdate {
+	if s != nil {
+		wu.SetCurrencyCode(*s)
 	}
-	return wu
-}
-
-// AddCurrencyCode adds i to the "currency_code" field.
-func (wu *WalletUpdate) AddCurrencyCode(i int) *WalletUpdate {
-	wu.mutation.AddCurrencyCode(i)
 	return wu
 }
 
@@ -243,10 +236,7 @@ func (wu *WalletUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddField(wallet.FieldBalance, field.TypeInt, value)
 	}
 	if value, ok := wu.mutation.CurrencyCode(); ok {
-		_spec.SetField(wallet.FieldCurrencyCode, field.TypeInt, value)
-	}
-	if value, ok := wu.mutation.AddedCurrencyCode(); ok {
-		_spec.AddField(wallet.FieldCurrencyCode, field.TypeInt, value)
+		_spec.SetField(wallet.FieldCurrencyCode, field.TypeString, value)
 	}
 	if value, ok := wu.mutation.DecimalPlaces(); ok {
 		_spec.SetField(wallet.FieldDecimalPlaces, field.TypeInt, value)
@@ -390,23 +380,16 @@ func (wuo *WalletUpdateOne) AddBalance(i int) *WalletUpdateOne {
 }
 
 // SetCurrencyCode sets the "currency_code" field.
-func (wuo *WalletUpdateOne) SetCurrencyCode(i int) *WalletUpdateOne {
-	wuo.mutation.ResetCurrencyCode()
-	wuo.mutation.SetCurrencyCode(i)
+func (wuo *WalletUpdateOne) SetCurrencyCode(s string) *WalletUpdateOne {
+	wuo.mutation.SetCurrencyCode(s)
 	return wuo
 }
 
 // SetNillableCurrencyCode sets the "currency_code" field if the given value is not nil.
-func (wuo *WalletUpdateOne) SetNillableCurrencyCode(i *int) *WalletUpdateOne {
-	if i != nil {
-		wuo.SetCurrencyCode(*i)
+func (wuo *WalletUpdateOne) SetNillableCurrencyCode(s *string) *WalletUpdateOne {
+	if s != nil {
+		wuo.SetCurrencyCode(*s)
 	}
-	return wuo
-}
-
-// AddCurrencyCode adds i to the "currency_code" field.
-func (wuo *WalletUpdateOne) AddCurrencyCode(i int) *WalletUpdateOne {
-	wuo.mutation.AddCurrencyCode(i)
 	return wuo
 }
 
@@ -596,10 +579,7 @@ func (wuo *WalletUpdateOne) sqlSave(ctx context.Context) (_node *Wallet, err err
 		_spec.AddField(wallet.FieldBalance, field.TypeInt, value)
 	}
 	if value, ok := wuo.mutation.CurrencyCode(); ok {
-		_spec.SetField(wallet.FieldCurrencyCode, field.TypeInt, value)
-	}
-	if value, ok := wuo.mutation.AddedCurrencyCode(); ok {
-		_spec.AddField(wallet.FieldCurrencyCode, field.TypeInt, value)
+		_spec.SetField(wallet.FieldCurrencyCode, field.TypeString, value)
 	}
 	if value, ok := wuo.mutation.DecimalPlaces(); ok {
 		_spec.SetField(wallet.FieldDecimalPlaces, field.TypeInt, value)
