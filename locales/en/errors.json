@@ -1,0 +1,42 @@
+[
+	{
+		"locale": "en",
+		"key": "errors::wallet::withdraw::insufficient_balance",
+		"trans": "Unable to withdraw due to insufficient balance in wallet"
+	},
+	{
+		"locale": "en",
+		"key": "errors::wallet::deposit::invalid_deposit_amount",
+		"trans": "Unable deposit to wallet due to invalid deposit amount"
+	},
+	{
+		"locale": "en",
+		"key": "errors::wallet::deposit::minimum_deposit_amount_required",
+		"trans": "The minimum of {0} is required for deposit"
+	},
+	{
+		"locale": "en",
+		"key": "errors::wallet::withdraw::invalid_withdraw_amount",
+		"trans": "The minimum of {0} is required for withdrawal"
+	},
+	{
+		"locale": "en",
+		"key": "errors::wallet::transfer::insufficient_balance",
+		"trans": "Unable to transfer due to insufficient balance in wallet"
+	},
+	{
+		"locale": "en",
+		"key": "errors::wallet::transfer::identical_source_and_destination",
+		"trans": "Recipient phone number must not be identical as sender"
+	},
+	{
+		"locale": "en",
+		"key": "errors::wallet::transfer::minimum_transfer_amount_required",
+		"trans": "The minimum of {0} is required for transfer"
+	},
+	{
+		"locale": "en",
+		"key": "errors::unauthorized",
+		"trans": "Unauthorized error"
+	}
+]

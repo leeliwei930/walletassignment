@@ -34,8 +34,10 @@ func InitializeFromEnv(opts ...InitializeOpts) (*application, error) {
 
 	err = initializeAll(
 		app.initializeConfigIfNeeded(),
+		app.InitLocale(),
 		app.InitLogger(),
 		app.InitEntClient(),
+		app.InitValidator(),
 	)
 	if err != nil {
 		return nil, err

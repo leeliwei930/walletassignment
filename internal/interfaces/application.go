@@ -17,4 +17,5 @@ type Application interface {
 	GetLog() *zap.Logger
 	Close()
 	WrapRefreshDatabaseTransaction(ctx context.Context, fn func()) error
+	GetLocale() Locale
 }

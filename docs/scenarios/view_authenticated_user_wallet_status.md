@@ -22,7 +22,7 @@ sequenceDiagram
 
     Client->>Backend: GET /api/v1/wallet/status<br/>
     Backend->>PostgresDB: Retrieve wallet account balance
-    Note over Backend: Invalid X-USER-ID
+    Note over Backend: Invalid X-USER-PHONE
     Backend-->>Client: Return error<br/>Status: 404<br/>{error: {message: "Invalid account"}}
 ```
 

@@ -3,6 +3,7 @@ package app
 import (
 	"database/sql"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/leeliwei930/walletassignment/config"
 	"github.com/leeliwei930/walletassignment/ent"
 	"github.com/leeliwei930/walletassignment/internal/interfaces"
@@ -15,6 +16,8 @@ type application struct {
 	config     *config.Config
 	dbMigrator interfaces.DBMigrator
 	log        *zap.Logger
+	validator  *validator.Validate
+	locale     interfaces.Locale
 }
 
 func New() *application {
@@ -39,6 +42,14 @@ func (app *application) GetConfig() *config.Config {
 
 func (app *application) GetDBMigrator() interfaces.DBMigrator {
 	return app.dbMigrator
+}
+
+func (app *application) GetValidator() *validator.Validate {
+	return app.validator
+}
+
+func (app *application) GetLocale() interfaces.Locale {
+	return app.locale
 }
 
 func (app *application) Close() {

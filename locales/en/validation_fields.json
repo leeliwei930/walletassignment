@@ -1,0 +1,7 @@
+[
+	{
+		"locale": "en",
+		"key": "errors::validation::message",
+		"trans": "The information you provided contains errors. Please review and correct it."
+	}
+]

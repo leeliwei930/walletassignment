@@ -30,7 +30,7 @@ sequenceDiagram
     participant Backend
     participant PostgresDB
 
-    Client->>Backend: POST /api/v1/wallet/deposit<br/>(amount: 0)<br/>Header: X-USER-ID
+    Client->>Backend: POST /api/v1/wallet/deposit<br/>(amount: 0)<br/>Header: X-USER-PHONE
     Note over Backend: Amount Validation Check
 	Backend->>Backend: Validate deposit amount
     Backend->>PostgresDB: Begin Transaction

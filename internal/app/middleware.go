@@ -29,6 +29,7 @@ func (app *application) SetupMiddlewares(ec *echo.Echo) *echo.Echo {
 			},
 		},
 	))
+	ec.Use(pkgappmiddleware.LanguageMiddleware(app))
 	ec.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogURI:       true,
 		LogStatus:    true,
