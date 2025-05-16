@@ -13,7 +13,9 @@ func (s *userService) SetupUser(ctx context.Context, phoneNumber string, firstNa
 	if err != nil {
 		return nil, err
 	}
-	defer tx.Rollback()
+	defer func() {
+		_ = tx.Rollback()
+	}()
 
 	user, err := tx.User.Create().
 		SetPhoneNumber(phoneNumber).
