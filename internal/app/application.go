@@ -6,18 +6,21 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/leeliwei930/walletassignment/config"
 	"github.com/leeliwei930/walletassignment/ent"
+	svcinterfaces "github.com/leeliwei930/walletassignment/internal/app/services/interfaces"
 	"github.com/leeliwei930/walletassignment/internal/interfaces"
 	"go.uber.org/zap"
 )
 
 type application struct {
-	ent        *ent.Client
-	db         *sql.DB
-	config     *config.Config
-	dbMigrator interfaces.DBMigrator
-	log        *zap.Logger
-	validator  *validator.Validate
-	locale     interfaces.Locale
+	ent           *ent.Client
+	db            *sql.DB
+	config        *config.Config
+	dbMigrator    interfaces.DBMigrator
+	log           *zap.Logger
+	validator     *validator.Validate
+	locale        interfaces.Locale
+	userService   svcinterfaces.UserService
+	walletService svcinterfaces.WalletService
 }
 
 func New() *application {

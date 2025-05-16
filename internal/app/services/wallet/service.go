@@ -10,6 +10,6 @@ type walletService struct {
 	app interfaces.Application
 }
 
-func NewWalletService(app interfaces.Application) walletinterfaces.WalletService {
+func New(app interfaces.Application) walletinterfaces.WalletService {
 	return &walletService{app: app}
 }

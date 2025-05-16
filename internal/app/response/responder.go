@@ -92,11 +92,15 @@ func (h *responder) BadRequestError(ec echo.Context, err error) error {
 	return nil
 }
 
-func (h *responder) UnauthorizedError(ec echo.Context, err error) error {
+func (h *responder) UnauthorizedError(ec echo.Context) error {
+	req := ec.Request()
+	app := h.App
+	locale := app.GetLocale().GetTranslatorFromRequest(req)
+	message, _ := locale.T("errors::unauthorized")
 	return h.ErrorJSON(
 		http.StatusUnauthorized, ErrorResponse{
 			StatusCode: errorCodes[UnauthorizedError],
-			Message:    err.Error(),
+			Message:    message,
 		},
 	)
 }

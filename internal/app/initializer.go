@@ -38,6 +38,7 @@ func InitializeFromEnv(opts ...InitializeOpts) (*application, error) {
 		app.InitLogger(),
 		app.InitEntClient(),
 		app.InitValidator(),
+		app.InitServices(),
 	)
 	if err != nil {
 		return nil, err

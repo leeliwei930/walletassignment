@@ -3,9 +3,9 @@ package interfaces
 import (
 	"context"
 
-	"github.com/leeliwei930/walletassignment/ent"
+	"github.com/google/uuid"
 )
 
 type UserService interface {
-	GetUserByPhone(ctx context.Context, phone string) (*ent.User, error)
+	GetUserIDByPhone(ctx context.Context, phone string) (uuid.UUID, error)
 }

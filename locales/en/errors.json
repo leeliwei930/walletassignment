@@ -37,6 +37,6 @@
 	{
 		"locale": "en",
 		"key": "errors::unauthorized",
-		"trans": "Unauthorized error"
+		"trans": "Unauthorized error, please ensure X-USER-PHONE is present in header"
 	}
 ]

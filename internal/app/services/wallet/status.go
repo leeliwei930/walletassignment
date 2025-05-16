@@ -7,5 +7,6 @@ import (
 )
 
 func (s *walletService) Status(ctx context.Context, params models.WalletStatusParams) (*models.WalletStatus, error) {
+
 	return &models.WalletStatus{}, nil
 }

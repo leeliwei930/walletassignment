@@ -1,9 +1,13 @@
 package interfaces
 
+import (
+	"github.com/google/uuid"
+)
+
 type ApplicationContext interface {
-	GetAuthUserPhone() string
+	GetAuthUserID() uuid.UUID
 	GetLanguage() string
 
 	SetLanguage(language string)
-	SetAuthUserPhone(phone string)
+	SetAuthUserID(userID uuid.UUID)
 }
