@@ -3,6 +3,7 @@ package wallet
 import (
 	"context"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/leeliwei930/walletassignment/ent/wallet"
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	"github.com/leeliwei930/walletassignment/pkg/formatter"
@@ -14,6 +15,9 @@ func (s *walletService) Status(ctx context.Context, params models.WalletStatusPa
 
 	wallet, err := entClient.Wallet.Query().
 		Where(wallet.UserID(params.UserID)).
+		ForShare(
+			sql.WithLockTables(wallet.Table),
+		).
 		Only(ctx)
 	if err != nil {
 		return nil, err

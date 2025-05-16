@@ -80,7 +80,7 @@ var (
 	WalletsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "balance", Type: field.TypeInt, Default: 0},
-		{Name: "currency_code", Type: field.TypeString, Default: "RM"},
+		{Name: "currency_code", Type: field.TypeString, Default: "USD"},
 		{Name: "decimal_places", Type: field.TypeInt, Default: 2},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
@@ -97,6 +97,13 @@ var (
 				Columns:    []*schema.Column{WalletsColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "wallet_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{WalletsColumns[6]},
 			},
 		},
 	}

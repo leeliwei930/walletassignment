@@ -1,5 +1,6 @@
-h1:Kal2CleQ/MRfblJKRKYqjq2hTl3SC0myNN3yferintE=
+h1:1Rf+gR0FtF+iQwMV++26sGTcR2gLFbOax8kcvG6mWYs=
 20250515115807_create_users_table.sql h1:gJSCdtHUjbeLVnBhIPg3itWADBi1o7ArWnFTgNqtzjA=
 20250515130749_create_wallets_table.sql h1:YrCwiQnmo+sq6tEKIMZtlgsvuRofZR5Bg3DPJI4WdYg=
 20250515131022_create_ledgers_table.sql h1:z4mYP5VfBEdYSihxUw+8V5/o76mZtTuUU9xxZHTG1Ss=
 20250516140300_update_currency_code_column_to_string.sql h1:g+ba25IG45y/3rNkFG52tZo6ME23wrOwLFbGmG8SAQ8=
+20250516145945_add_index_to_user_id_column_on_wallet_table.sql h1:+eiC9tkBw1DmgXgZoq/GWdYTy6oic8TkLbAkJowrUkM=
