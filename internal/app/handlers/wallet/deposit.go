@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	pkgappctx "github.com/leeliwei930/walletassignment/internal/app/context"
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	"github.com/leeliwei930/walletassignment/internal/app/response"
 )
@@ -36,7 +37,15 @@ func (h *WalletHandler) Deposit(ec echo.Context) error {
 
 	ctx := ec.Request().Context()
 	walletSvc := h.app.GetWalletService()
+
+	appCtx, err := pkgappctx.GetApplicationContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	userID := appCtx.GetAuthUserID()
 	depositTrx, err := walletSvc.Deposit(ctx, models.WalletDepositParams{
+		UserID: userID,
 		Amount: depositRequest.Amount,
 	})
 	if err != nil {

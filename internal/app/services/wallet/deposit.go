@@ -7,7 +7,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/leeliwei930/walletassignment/ent/user"
 	"github.com/leeliwei930/walletassignment/ent/wallet"
-	pkgappctx "github.com/leeliwei930/walletassignment/internal/app/context"
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	"github.com/leeliwei930/walletassignment/pkg/formatter"
 )
@@ -16,12 +15,6 @@ const TRX_TYPE_DEPOSIT = "deposit"
 const TRX_TYPE_DESCRIPTION_LOCALE_KEY = "wallet::deposit::trx::description"
 
 func (s *walletService) Deposit(ctx context.Context, params models.WalletDepositParams) (*models.WalletDeposit, error) {
-
-	appCtx, err := pkgappctx.GetApplicationContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-	userID := appCtx.GetAuthUserID()
 
 	entClient := s.app.GetEnt()
 	locale := s.app.GetLocale()
@@ -33,7 +26,7 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 		return nil, err
 	}
 
-	userRec, err := tx.User.Query().Where(user.ID(userID)).First(ctx)
+	userRec, err := tx.User.Query().Where(user.ID(params.UserID)).First(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +37,7 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 	// retrieve current wallet
 	wallet, err := tx.Wallet.
 		Query().
-		Where(wallet.UserID(userID)).
+		Where(wallet.UserID(params.UserID)).
 		ForUpdate(sql.WithLockTables(wallet.Table)).
 		First(ctx)
 	if err != nil {
