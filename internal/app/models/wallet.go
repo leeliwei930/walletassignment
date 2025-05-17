@@ -14,10 +14,11 @@ type WalletStatus struct {
 }
 
 type WalletTransaction struct {
-	ID        uuid.UUID `json:"id"`
-	Amount    int       `json:"amount"`
-	Timestamp time.Time `json:"timestamp"`
-	Type      string    `json:"type,omitempty"`
+	ID                     uuid.UUID `json:"id"`
+	Amount                 int       `json:"amount"`
+	Timestamp              time.Time `json:"timestamp"`
+	Type                   string    `json:"type,omitempty"`
+	RecipientReferenceNote string    `json:"recipientReferenceNote,omitempty"`
 }
 
 type WalletDeposit struct {

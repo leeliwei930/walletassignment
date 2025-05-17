@@ -147,10 +147,11 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 			FormattedBalance: formattedSourceWalletBalance,
 		},
 		Transaction: models.WalletTransaction{
-			ID:        sourceLedger.ID,
-			Amount:    sourceLedger.Amount,
-			Timestamp: sourceLedger.CreatedAt,
-			Type:      sourceLedger.TransactionType,
+			ID:                     sourceLedger.ID,
+			Amount:                 sourceLedger.Amount,
+			Timestamp:              sourceLedger.CreatedAt,
+			Type:                   sourceLedger.TransactionType,
+			RecipientReferenceNote: *sourceLedger.RecipientReferenceNote,
 		},
 	}, nil
 }
