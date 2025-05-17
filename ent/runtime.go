@@ -23,11 +23,11 @@ func init() {
 	// ledger.AmountValidator is a validator for the "amount" field. It is called by the builders before save.
 	ledger.AmountValidator = ledgerDescAmount.Validators[0].(func(int) error)
 	// ledgerDescCreatedAt is the schema descriptor for created_at field.
-	ledgerDescCreatedAt := ledgerFields[5].Descriptor()
+	ledgerDescCreatedAt := ledgerFields[6].Descriptor()
 	// ledger.DefaultCreatedAt holds the default value on creation for the created_at field.
 	ledger.DefaultCreatedAt = ledgerDescCreatedAt.Default.(func() time.Time)
 	// ledgerDescUpdatedAt is the schema descriptor for updated_at field.
-	ledgerDescUpdatedAt := ledgerFields[6].Descriptor()
+	ledgerDescUpdatedAt := ledgerFields[7].Descriptor()
 	// ledger.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	ledger.DefaultUpdatedAt = ledgerDescUpdatedAt.Default.(func() time.Time)
 	// ledger.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

@@ -10,6 +10,16 @@
 		"locale": "en"
 	},
 	{
+		"key": "wallet::withdraw::amount",
+		"trans": "Withdraw amount",
+		"locale": "en"
+	},
+	{
+		"key": "wallet::withdraw::amount::label",
+		"trans": "amount",
+		"locale": "en"
+	},
+	{
 		"key": "wallet::transfer::amount",
 		"trans": "Transfer amount",
 		"locale": "en"
@@ -26,7 +36,17 @@
 	},
 	{
 		"key": "wallet::transfer::recipient_phone_number::label",
-		"trans": "recipient_phone_number",
+		"trans": "recipientPhoneNumber",
+		"locale": "en"
+	},
+	{
+		"key": "wallet::transfer::recipient_reference_note",
+		"trans": "Recipient reference note",
+		"locale": "en"
+	},
+	{
+		"key": "wallet::transfer::recipient_reference_note::label",
+		"trans": "recipientReferenceNote",
 		"locale": "en"
 	}
 ]

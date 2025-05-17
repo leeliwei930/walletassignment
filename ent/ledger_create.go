@@ -43,6 +43,20 @@ func (lc *LedgerCreate) SetDescription(s string) *LedgerCreate {
 	return lc
 }
 
+// SetRecipientReferenceNote sets the "recipient_reference_note" field.
+func (lc *LedgerCreate) SetRecipientReferenceNote(s string) *LedgerCreate {
+	lc.mutation.SetRecipientReferenceNote(s)
+	return lc
+}
+
+// SetNillableRecipientReferenceNote sets the "recipient_reference_note" field if the given value is not nil.
+func (lc *LedgerCreate) SetNillableRecipientReferenceNote(s *string) *LedgerCreate {
+	if s != nil {
+		lc.SetRecipientReferenceNote(*s)
+	}
+	return lc
+}
+
 // SetTransactionType sets the "transaction_type" field.
 func (lc *LedgerCreate) SetTransactionType(s string) *LedgerCreate {
 	lc.mutation.SetTransactionType(s)
@@ -217,6 +231,10 @@ func (lc *LedgerCreate) createSpec() (*Ledger, *sqlgraph.CreateSpec) {
 		_spec.SetField(ledger.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
+	if value, ok := lc.mutation.RecipientReferenceNote(); ok {
+		_spec.SetField(ledger.FieldRecipientReferenceNote, field.TypeString, value)
+		_node.RecipientReferenceNote = &value
+	}
 	if value, ok := lc.mutation.TransactionType(); ok {
 		_spec.SetField(ledger.FieldTransactionType, field.TypeString, value)
 		_node.TransactionType = value
@@ -337,6 +355,24 @@ func (u *LedgerUpsert) SetDescription(v string) *LedgerUpsert {
 // UpdateDescription sets the "description" field to the value that was provided on create.
 func (u *LedgerUpsert) UpdateDescription() *LedgerUpsert {
 	u.SetExcluded(ledger.FieldDescription)
+	return u
+}
+
+// SetRecipientReferenceNote sets the "recipient_reference_note" field.
+func (u *LedgerUpsert) SetRecipientReferenceNote(v string) *LedgerUpsert {
+	u.Set(ledger.FieldRecipientReferenceNote, v)
+	return u
+}
+
+// UpdateRecipientReferenceNote sets the "recipient_reference_note" field to the value that was provided on create.
+func (u *LedgerUpsert) UpdateRecipientReferenceNote() *LedgerUpsert {
+	u.SetExcluded(ledger.FieldRecipientReferenceNote)
+	return u
+}
+
+// ClearRecipientReferenceNote clears the value of the "recipient_reference_note" field.
+func (u *LedgerUpsert) ClearRecipientReferenceNote() *LedgerUpsert {
+	u.SetNull(ledger.FieldRecipientReferenceNote)
 	return u
 }
 
@@ -470,6 +506,27 @@ func (u *LedgerUpsertOne) SetDescription(v string) *LedgerUpsertOne {
 func (u *LedgerUpsertOne) UpdateDescription() *LedgerUpsertOne {
 	return u.Update(func(s *LedgerUpsert) {
 		s.UpdateDescription()
+	})
+}
+
+// SetRecipientReferenceNote sets the "recipient_reference_note" field.
+func (u *LedgerUpsertOne) SetRecipientReferenceNote(v string) *LedgerUpsertOne {
+	return u.Update(func(s *LedgerUpsert) {
+		s.SetRecipientReferenceNote(v)
+	})
+}
+
+// UpdateRecipientReferenceNote sets the "recipient_reference_note" field to the value that was provided on create.
+func (u *LedgerUpsertOne) UpdateRecipientReferenceNote() *LedgerUpsertOne {
+	return u.Update(func(s *LedgerUpsert) {
+		s.UpdateRecipientReferenceNote()
+	})
+}
+
+// ClearRecipientReferenceNote clears the value of the "recipient_reference_note" field.
+func (u *LedgerUpsertOne) ClearRecipientReferenceNote() *LedgerUpsertOne {
+	return u.Update(func(s *LedgerUpsert) {
+		s.ClearRecipientReferenceNote()
 	})
 }
 
@@ -776,6 +833,27 @@ func (u *LedgerUpsertBulk) SetDescription(v string) *LedgerUpsertBulk {
 func (u *LedgerUpsertBulk) UpdateDescription() *LedgerUpsertBulk {
 	return u.Update(func(s *LedgerUpsert) {
 		s.UpdateDescription()
+	})
+}
+
+// SetRecipientReferenceNote sets the "recipient_reference_note" field.
+func (u *LedgerUpsertBulk) SetRecipientReferenceNote(v string) *LedgerUpsertBulk {
+	return u.Update(func(s *LedgerUpsert) {
+		s.SetRecipientReferenceNote(v)
+	})
+}
+
+// UpdateRecipientReferenceNote sets the "recipient_reference_note" field to the value that was provided on create.
+func (u *LedgerUpsertBulk) UpdateRecipientReferenceNote() *LedgerUpsertBulk {
+	return u.Update(func(s *LedgerUpsert) {
+		s.UpdateRecipientReferenceNote()
+	})
+}
+
+// ClearRecipientReferenceNote clears the value of the "recipient_reference_note" field.
+func (u *LedgerUpsertBulk) ClearRecipientReferenceNote() *LedgerUpsertBulk {
+	return u.Update(func(s *LedgerUpsert) {
+		s.ClearRecipientReferenceNote()
 	})
 }
 

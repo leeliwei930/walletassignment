@@ -13,6 +13,7 @@ var (
 		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "amount", Type: field.TypeInt},
 		{Name: "description", Type: field.TypeString},
+		{Name: "recipient_reference_note", Type: field.TypeString, Nullable: true},
 		{Name: "transaction_type", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
@@ -26,7 +27,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "ledgers_wallets_ledgers",
-				Columns:    []*schema.Column{LedgersColumns[6]},
+				Columns:    []*schema.Column{LedgersColumns[7]},
 				RefColumns: []*schema.Column{WalletsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -35,22 +36,22 @@ var (
 			{
 				Name:    "ledger_wallet_id_transaction_type",
 				Unique:  false,
-				Columns: []*schema.Column{LedgersColumns[6], LedgersColumns[3]},
+				Columns: []*schema.Column{LedgersColumns[7], LedgersColumns[4]},
 			},
 			{
 				Name:    "ledger_wallet_id_created_at",
 				Unique:  false,
-				Columns: []*schema.Column{LedgersColumns[6], LedgersColumns[4]},
+				Columns: []*schema.Column{LedgersColumns[7], LedgersColumns[5]},
 			},
 			{
 				Name:    "ledger_transaction_type",
 				Unique:  false,
-				Columns: []*schema.Column{LedgersColumns[3]},
+				Columns: []*schema.Column{LedgersColumns[4]},
 			},
 			{
 				Name:    "ledger_created_at",
 				Unique:  false,
-				Columns: []*schema.Column{LedgersColumns[4]},
+				Columns: []*schema.Column{LedgersColumns[5]},
 			},
 		},
 	}

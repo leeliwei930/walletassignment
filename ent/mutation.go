@@ -35,21 +35,22 @@ const (
 // LedgerMutation represents an operation that mutates the Ledger nodes in the graph.
 type LedgerMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *uuid.UUID
-	amount           *int
-	addamount        *int
-	description      *string
-	transaction_type *string
-	created_at       *time.Time
-	updated_at       *time.Time
-	clearedFields    map[string]struct{}
-	wallet           *uuid.UUID
-	clearedwallet    bool
-	done             bool
-	oldValue         func(context.Context) (*Ledger, error)
-	predicates       []predicate.Ledger
+	op                       Op
+	typ                      string
+	id                       *uuid.UUID
+	amount                   *int
+	addamount                *int
+	description              *string
+	recipient_reference_note *string
+	transaction_type         *string
+	created_at               *time.Time
+	updated_at               *time.Time
+	clearedFields            map[string]struct{}
+	wallet                   *uuid.UUID
+	clearedwallet            bool
+	done                     bool
+	oldValue                 func(context.Context) (*Ledger, error)
+	predicates               []predicate.Ledger
 }
 
 var _ ent.Mutation = (*LedgerMutation)(nil)
@@ -284,6 +285,55 @@ func (m *LedgerMutation) ResetDescription() {
 	m.description = nil
 }
 
+// SetRecipientReferenceNote sets the "recipient_reference_note" field.
+func (m *LedgerMutation) SetRecipientReferenceNote(s string) {
+	m.recipient_reference_note = &s
+}
+
+// RecipientReferenceNote returns the value of the "recipient_reference_note" field in the mutation.
+func (m *LedgerMutation) RecipientReferenceNote() (r string, exists bool) {
+	v := m.recipient_reference_note
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRecipientReferenceNote returns the old "recipient_reference_note" field's value of the Ledger entity.
+// If the Ledger object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LedgerMutation) OldRecipientReferenceNote(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRecipientReferenceNote is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRecipientReferenceNote requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRecipientReferenceNote: %w", err)
+	}
+	return oldValue.RecipientReferenceNote, nil
+}
+
+// ClearRecipientReferenceNote clears the value of the "recipient_reference_note" field.
+func (m *LedgerMutation) ClearRecipientReferenceNote() {
+	m.recipient_reference_note = nil
+	m.clearedFields[ledger.FieldRecipientReferenceNote] = struct{}{}
+}
+
+// RecipientReferenceNoteCleared returns if the "recipient_reference_note" field was cleared in this mutation.
+func (m *LedgerMutation) RecipientReferenceNoteCleared() bool {
+	_, ok := m.clearedFields[ledger.FieldRecipientReferenceNote]
+	return ok
+}
+
+// ResetRecipientReferenceNote resets all changes to the "recipient_reference_note" field.
+func (m *LedgerMutation) ResetRecipientReferenceNote() {
+	m.recipient_reference_note = nil
+	delete(m.clearedFields, ledger.FieldRecipientReferenceNote)
+}
+
 // SetTransactionType sets the "transaction_type" field.
 func (m *LedgerMutation) SetTransactionType(s string) {
 	m.transaction_type = &s
@@ -453,7 +503,7 @@ func (m *LedgerMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *LedgerMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.wallet != nil {
 		fields = append(fields, ledger.FieldWalletID)
 	}
@@ -462,6 +512,9 @@ func (m *LedgerMutation) Fields() []string {
 	}
 	if m.description != nil {
 		fields = append(fields, ledger.FieldDescription)
+	}
+	if m.recipient_reference_note != nil {
+		fields = append(fields, ledger.FieldRecipientReferenceNote)
 	}
 	if m.transaction_type != nil {
 		fields = append(fields, ledger.FieldTransactionType)
@@ -486,6 +539,8 @@ func (m *LedgerMutation) Field(name string) (ent.Value, bool) {
 		return m.Amount()
 	case ledger.FieldDescription:
 		return m.Description()
+	case ledger.FieldRecipientReferenceNote:
+		return m.RecipientReferenceNote()
 	case ledger.FieldTransactionType:
 		return m.TransactionType()
 	case ledger.FieldCreatedAt:
@@ -507,6 +562,8 @@ func (m *LedgerMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldAmount(ctx)
 	case ledger.FieldDescription:
 		return m.OldDescription(ctx)
+	case ledger.FieldRecipientReferenceNote:
+		return m.OldRecipientReferenceNote(ctx)
 	case ledger.FieldTransactionType:
 		return m.OldTransactionType(ctx)
 	case ledger.FieldCreatedAt:
@@ -542,6 +599,13 @@ func (m *LedgerMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case ledger.FieldRecipientReferenceNote:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRecipientReferenceNote(v)
 		return nil
 	case ledger.FieldTransactionType:
 		v, ok := value.(string)
@@ -608,7 +672,11 @@ func (m *LedgerMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *LedgerMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(ledger.FieldRecipientReferenceNote) {
+		fields = append(fields, ledger.FieldRecipientReferenceNote)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -621,6 +689,11 @@ func (m *LedgerMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *LedgerMutation) ClearField(name string) error {
+	switch name {
+	case ledger.FieldRecipientReferenceNote:
+		m.ClearRecipientReferenceNote()
+		return nil
+	}
 	return fmt.Errorf("unknown Ledger nullable field %s", name)
 }
 
@@ -636,6 +709,9 @@ func (m *LedgerMutation) ResetField(name string) error {
 		return nil
 	case ledger.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case ledger.FieldRecipientReferenceNote:
+		m.ResetRecipientReferenceNote()
 		return nil
 	case ledger.FieldTransactionType:
 		m.ResetTransactionType()

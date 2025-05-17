@@ -22,6 +22,7 @@ func (Ledger) Fields() []ent.Field {
 		field.UUID("wallet_id", uuid.UUID{}),
 		field.Int("amount").Positive(),
 		field.String("description"),
+		field.String("recipient_reference_note").Optional().Nillable(),
 		field.String("transaction_type"),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),

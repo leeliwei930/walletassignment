@@ -27,7 +27,7 @@ type JSONResponse struct {
 }
 
 type ErrorResponse struct {
-	StatusCode string            `json:"statusCode,omitempty"`
+	ErrorCode  string            `json:"errorCode,omitempty"`
 	Message    string            `json:"message"`
 	StackTrace []string          `json:"stackTrace,omitempty"`
 	Fields     map[string]string `json:"fields,omitempty"`
@@ -50,7 +50,7 @@ func (h *responder) AbortIfIncorrectJsonPayload(ec echo.Context, err error) erro
 
 		return h.ErrorJSON(
 			http.StatusUnprocessableEntity, ErrorResponse{
-				StatusCode: errorCodes[JSONEmptyBodyError],
+				ErrorCode:  errorCodes[JSONEmptyBodyError],
 				Message:    err.Error(),
 				StackTrace: strings.Split(stackTraces, "\n"),
 			},
@@ -67,7 +67,7 @@ func (h *responder) UnexpectedError(ec echo.Context, err error) error {
 
 		return h.ErrorJSON(
 			http.StatusInternalServerError, ErrorResponse{
-				StatusCode: errorCodes[Unexpected],
+				ErrorCode:  errorCodes[Unexpected],
 				Message:    err.Error(),
 				StackTrace: strings.Split(stackTraces, "\n"),
 			},
@@ -86,16 +86,16 @@ func (h *responder) BadRequestError(ec echo.Context, err error) error {
 			message, _ := ut.T(invalidReqErr.Description)
 			return h.ErrorJSON(
 				http.StatusBadRequest, ErrorResponse{
-					StatusCode: errorCodes[BadRequestError],
-					Message:    message,
+					ErrorCode: invalidReqErr.Code,
+					Message:   message,
 				},
 			)
 		}
 
 		return h.ErrorJSON(
 			http.StatusBadRequest, ErrorResponse{
-				StatusCode: errorCodes[BadRequestError],
-				Message:    err.Error(),
+				ErrorCode: errorCodes[BadRequestError],
+				Message:   err.Error(),
 			},
 		)
 	}
@@ -105,10 +105,10 @@ func (h *responder) BadRequestError(ec echo.Context, err error) error {
 func (h *responder) ValidationError(ec echo.Context, verr errors.ValidationError) error {
 
 	return h.ErrorJSON(
-		http.StatusBadRequest, ErrorResponse{
-			StatusCode: errorCodes[ValidationError],
-			Message:    verr.Message,
-			Fields:     verr.Errors,
+		http.StatusUnprocessableEntity, ErrorResponse{
+			ErrorCode: errorCodes[ValidationError],
+			Message:   verr.Message,
+			Fields:    verr.Errors,
 		},
 	)
 }
@@ -120,8 +120,8 @@ func (h *responder) UnauthorizedError(ec echo.Context) error {
 	message, _ := locale.T("errors::unauthorized")
 	return h.ErrorJSON(
 		http.StatusUnauthorized, ErrorResponse{
-			StatusCode: errorCodes[UnauthorizedError],
-			Message:    message,
+			ErrorCode: errorCodes[UnauthorizedError],
+			Message:   message,
 		},
 	)
 }

@@ -79,6 +79,26 @@ func (lu *LedgerUpdate) SetNillableDescription(s *string) *LedgerUpdate {
 	return lu
 }
 
+// SetRecipientReferenceNote sets the "recipient_reference_note" field.
+func (lu *LedgerUpdate) SetRecipientReferenceNote(s string) *LedgerUpdate {
+	lu.mutation.SetRecipientReferenceNote(s)
+	return lu
+}
+
+// SetNillableRecipientReferenceNote sets the "recipient_reference_note" field if the given value is not nil.
+func (lu *LedgerUpdate) SetNillableRecipientReferenceNote(s *string) *LedgerUpdate {
+	if s != nil {
+		lu.SetRecipientReferenceNote(*s)
+	}
+	return lu
+}
+
+// ClearRecipientReferenceNote clears the value of the "recipient_reference_note" field.
+func (lu *LedgerUpdate) ClearRecipientReferenceNote() *LedgerUpdate {
+	lu.mutation.ClearRecipientReferenceNote()
+	return lu
+}
+
 // SetTransactionType sets the "transaction_type" field.
 func (lu *LedgerUpdate) SetTransactionType(s string) *LedgerUpdate {
 	lu.mutation.SetTransactionType(s)
@@ -199,6 +219,12 @@ func (lu *LedgerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := lu.mutation.Description(); ok {
 		_spec.SetField(ledger.FieldDescription, field.TypeString, value)
 	}
+	if value, ok := lu.mutation.RecipientReferenceNote(); ok {
+		_spec.SetField(ledger.FieldRecipientReferenceNote, field.TypeString, value)
+	}
+	if lu.mutation.RecipientReferenceNoteCleared() {
+		_spec.ClearField(ledger.FieldRecipientReferenceNote, field.TypeString)
+	}
 	if value, ok := lu.mutation.TransactionType(); ok {
 		_spec.SetField(ledger.FieldTransactionType, field.TypeString, value)
 	}
@@ -303,6 +329,26 @@ func (luo *LedgerUpdateOne) SetNillableDescription(s *string) *LedgerUpdateOne {
 	if s != nil {
 		luo.SetDescription(*s)
 	}
+	return luo
+}
+
+// SetRecipientReferenceNote sets the "recipient_reference_note" field.
+func (luo *LedgerUpdateOne) SetRecipientReferenceNote(s string) *LedgerUpdateOne {
+	luo.mutation.SetRecipientReferenceNote(s)
+	return luo
+}
+
+// SetNillableRecipientReferenceNote sets the "recipient_reference_note" field if the given value is not nil.
+func (luo *LedgerUpdateOne) SetNillableRecipientReferenceNote(s *string) *LedgerUpdateOne {
+	if s != nil {
+		luo.SetRecipientReferenceNote(*s)
+	}
+	return luo
+}
+
+// ClearRecipientReferenceNote clears the value of the "recipient_reference_note" field.
+func (luo *LedgerUpdateOne) ClearRecipientReferenceNote() *LedgerUpdateOne {
+	luo.mutation.ClearRecipientReferenceNote()
 	return luo
 }
 
@@ -455,6 +501,12 @@ func (luo *LedgerUpdateOne) sqlSave(ctx context.Context) (_node *Ledger, err err
 	}
 	if value, ok := luo.mutation.Description(); ok {
 		_spec.SetField(ledger.FieldDescription, field.TypeString, value)
+	}
+	if value, ok := luo.mutation.RecipientReferenceNote(); ok {
+		_spec.SetField(ledger.FieldRecipientReferenceNote, field.TypeString, value)
+	}
+	if luo.mutation.RecipientReferenceNoteCleared() {
+		_spec.ClearField(ledger.FieldRecipientReferenceNote, field.TypeString)
 	}
 	if value, ok := luo.mutation.TransactionType(); ok {
 		_spec.SetField(ledger.FieldTransactionType, field.TypeString, value)

@@ -44,12 +44,12 @@ components:
         formattedAmount:
           type: string
           example: "MYR 120.00"
+        description:
+          type: string
+          example: "Payment for lunch"
         type:
           type: string
           enum: [deposit, withdrawal, transfer_in, transfer_out]
-        description:
-          type: string
-          example: "Deposit to Wallet"
         timestamp:
           type: string
           format: date-time
@@ -120,15 +120,15 @@ paths:
                   balance: 12000
                   formattedBalance: "RM 120.00"
                   currency: "MYR"
-        '404':
-          description: Wallet not found
+        '401':
+          description: Unauthorized access
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                errorCode: "ERR_WALLET_10001"
-                message: "Invalid account"
+                errorCode: "ERR_UNAUTHORIZED_401"
+                message: "Unauthorized error, please ensure X-USER-PHONE is present in header"
 
   /wallet/deposit:
     post:
@@ -173,17 +173,19 @@ paths:
                 transaction:
                   id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
                   amount: 120
-                  description: "Deposit to John's Wallet"
                   timestamp: "2024-03-20T10:00:00Z"
-        '400':
+                  type: "deposit"
+        '422':
           description: Invalid deposit amount
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                errorCode: "ERR_DEPOSIT_10001"
-                message: "Invalid deposit amount"
+                errorCode: "ERR_VALIDATION_422"
+                message: "The information you provided contains errors. Please review and correct it."
+                fields:
+                  amount: "Deposit amount must be 100 or greater"
 
   /wallet/withdraw:
     post:
@@ -218,6 +220,7 @@ paths:
                     $ref: '#/components/schemas/Transaction'
               example:
                 wallet:
+                  id: "3508bc49-4ec6-4326-a37c-a4192beca978"
                   balance: 12000
                   currency: "MYR"
                   formattedBalance: "RM 120.00"
@@ -225,7 +228,6 @@ paths:
                   id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
                   amount: 200
                   formattedAmount: "MYR 2.00"
-                  description: "Balance withdrawal from wallet"
                   timestamp: "2024-03-20T10:00:00Z"
         '400':
           description: Invalid withdrawal request
@@ -237,11 +239,20 @@ paths:
                 insufficientBalance:
                   value:
                     errorCode: "ERR_WITHDRAW_10001"
-                    message: "Insufficient balance"
+                    message: "Unable to withdraw due to insufficient balance in wallet"
+        '422':
+          description: Invalid withdrawal amount
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
                 invalidAmount:
                   value:
-                    errorCode: "ERR_WITHDRAW_10003"
-                    message: "A minimum of 1 cent is required to perform withdrawal"
+                    errorCode: "ERR_VALIDATION_422"
+                    message: "The information you provided contains errors. Please review and correct it."
+                    fields:
+                      amount: "Withdraw amount must be 1 or greater"
 
   /wallet/transfer:
     post:
@@ -264,12 +275,12 @@ paths:
                   type: integer
                   description: Amount to transfer in cents
                   example: 12000
+                recipientReferenceNote:
+                  type: string
+                  example: "Payment for lunch"
                 recipientPhoneNumber:
                   type: string
                   example: "+60123456789"
-                description:
-                  type: string
-                  example: "Payment for lunch"
       responses:
         '200':
           description: Successful transfer
@@ -284,12 +295,15 @@ paths:
                     $ref: '#/components/schemas/Transaction'
               example:
                 wallet:
-                  balance: 190000
-                  formattedBalance: "MYR 1900"
+                  id: "3508bc49-4ec6-4326-a37c-a4192beca978"
+                  balance: 76100
+                  currency: "USD"
+                  formattedBalance: "USD 761.00"
                 transaction:
-                  amount: 190
-                  description: "Balance transfer to User B"
-                  timestamp: "2024-03-20T10:00:00Z"
+                  id: "67d6e1b1-c3dc-46be-b659-763c7781556c"
+                  amount: 12000
+                  timestamp: "2025-05-17T23:38:08.575413+08:00"
+                  type: "transfer_out"
         '400':
           description: Invalid transfer request
           content:

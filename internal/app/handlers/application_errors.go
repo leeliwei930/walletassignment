@@ -21,8 +21,8 @@ func ApplicationErrorHandler(app interfaces.Application) echo.HTTPErrorHandler {
 
 		if echoHttpErr, isEchoHttpErr := err.(*echo.HTTPError); isEchoHttpErr {
 			_ = responder.ErrorJSON(echoHttpErr.Code, response.ErrorResponse{
-				StatusCode: strconv.Itoa(echoHttpErr.Code),
-				Message:    echoHttpErr.Error(),
+				ErrorCode: strconv.Itoa(echoHttpErr.Code),
+				Message:   echoHttpErr.Error(),
 			})
 			return
 		}

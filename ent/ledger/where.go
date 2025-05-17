@@ -71,6 +71,11 @@ func Description(v string) predicate.Ledger {
 	return predicate.Ledger(sql.FieldEQ(FieldDescription, v))
 }
 
+// RecipientReferenceNote applies equality check predicate on the "recipient_reference_note" field. It's identical to RecipientReferenceNoteEQ.
+func RecipientReferenceNote(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldEQ(FieldRecipientReferenceNote, v))
+}
+
 // TransactionType applies equality check predicate on the "transaction_type" field. It's identical to TransactionTypeEQ.
 func TransactionType(v string) predicate.Ledger {
 	return predicate.Ledger(sql.FieldEQ(FieldTransactionType, v))
@@ -209,6 +214,81 @@ func DescriptionEqualFold(v string) predicate.Ledger {
 // DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
 func DescriptionContainsFold(v string) predicate.Ledger {
 	return predicate.Ledger(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// RecipientReferenceNoteEQ applies the EQ predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteEQ(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldEQ(FieldRecipientReferenceNote, v))
+}
+
+// RecipientReferenceNoteNEQ applies the NEQ predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteNEQ(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldNEQ(FieldRecipientReferenceNote, v))
+}
+
+// RecipientReferenceNoteIn applies the In predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteIn(vs ...string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldIn(FieldRecipientReferenceNote, vs...))
+}
+
+// RecipientReferenceNoteNotIn applies the NotIn predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteNotIn(vs ...string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldNotIn(FieldRecipientReferenceNote, vs...))
+}
+
+// RecipientReferenceNoteGT applies the GT predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteGT(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldGT(FieldRecipientReferenceNote, v))
+}
+
+// RecipientReferenceNoteGTE applies the GTE predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteGTE(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldGTE(FieldRecipientReferenceNote, v))
+}
+
+// RecipientReferenceNoteLT applies the LT predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteLT(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldLT(FieldRecipientReferenceNote, v))
+}
+
+// RecipientReferenceNoteLTE applies the LTE predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteLTE(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldLTE(FieldRecipientReferenceNote, v))
+}
+
+// RecipientReferenceNoteContains applies the Contains predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteContains(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldContains(FieldRecipientReferenceNote, v))
+}
+
+// RecipientReferenceNoteHasPrefix applies the HasPrefix predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteHasPrefix(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldHasPrefix(FieldRecipientReferenceNote, v))
+}
+
+// RecipientReferenceNoteHasSuffix applies the HasSuffix predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteHasSuffix(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldHasSuffix(FieldRecipientReferenceNote, v))
+}
+
+// RecipientReferenceNoteIsNil applies the IsNil predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteIsNil() predicate.Ledger {
+	return predicate.Ledger(sql.FieldIsNull(FieldRecipientReferenceNote))
+}
+
+// RecipientReferenceNoteNotNil applies the NotNil predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteNotNil() predicate.Ledger {
+	return predicate.Ledger(sql.FieldNotNull(FieldRecipientReferenceNote))
+}
+
+// RecipientReferenceNoteEqualFold applies the EqualFold predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteEqualFold(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldEqualFold(FieldRecipientReferenceNote, v))
+}
+
+// RecipientReferenceNoteContainsFold applies the ContainsFold predicate on the "recipient_reference_note" field.
+func RecipientReferenceNoteContainsFold(v string) predicate.Ledger {
+	return predicate.Ledger(sql.FieldContainsFold(FieldRecipientReferenceNote, v))
 }
 
 // TransactionTypeEQ applies the EQ predicate on the "transaction_type" field.

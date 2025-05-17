@@ -18,16 +18,6 @@ const (
 	TRX_TYPE_TRANSFER_IN_DESCRIPTION_LOCALE_KEY  = "wallet::transfer::in::description"
 )
 
-type TransferRequest struct {
-	Amount               int    `json:"amount" validate:"required,min=1,max=1000000" localeKey:"wallet::transfer::amount"`
-	RecipientPhoneNumber string `json:"recipient_phone_number" validate:"required" localeKey:"wallet::transfer::recipient_phone_number"`
-}
-
-type TransferResponse struct {
-	Wallet      models.WalletStatus      `json:"wallet"`
-	Transaction models.WalletTransaction `json:"transaction"`
-}
-
 func (s *walletService) Transfer(ctx context.Context, params models.WalletTransferParams) (*models.WalletTransfer, error) {
 
 	entClient := s.app.GetEnt()
@@ -110,6 +100,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 		SetWalletID(sourceWallet.ID).
 		SetAmount(params.Amount).
 		SetDescription(transferOutDescription).
+		SetRecipientReferenceNote(params.RecipientReferenceNote).
 		SetTransactionType(TRX_TYPE_TRANSFER_OUT).
 		SetCreatedAt(sourceWallet.UpdatedAt).
 		Save(ctx)
@@ -130,6 +121,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 		SetWalletID(destinationWallet.ID).
 		SetAmount(params.Amount).
 		SetDescription(transferInDescription).
+		SetRecipientReferenceNote(params.RecipientReferenceNote).
 		SetTransactionType(TRX_TYPE_TRANSFER_IN).
 		SetCreatedAt(destinationWallet.UpdatedAt).
 		Save(ctx)

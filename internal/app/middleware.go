@@ -58,7 +58,7 @@ func (app *application) SetupMiddlewares(ec *echo.Echo) *echo.Echo {
 	ec.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     strings.Split(viper.GetString(constant.CORS_ALLOWED_ORIGINS), ","),
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
-		AllowHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "X-USER-PHONE"},
 		ExposeHeaders:    []string{"Link"},
 		AllowCredentials: false,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers

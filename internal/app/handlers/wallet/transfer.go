@@ -11,8 +11,9 @@ import (
 )
 
 type TransferRequest struct {
-	Amount               int    `json:"amount" validate:"required,min=1,max=1000000" localeKey:"wallet::transfer::amount"`
-	RecipientPhoneNumber string `json:"recipient_phone_number" validate:"required" localeKey:"wallet::transfer::recipient_phone_number"`
+	Amount                 int    `json:"amount" validate:"required,min=1,max=1000000" localeKey:"wallet::transfer::amount"`
+	RecipientPhoneNumber   string `json:"recipientPhoneNumber" validate:"required" localeKey:"wallet::transfer::recipient_phone_number"`
+	RecipientReferenceNote string `json:"recipientReferenceNote" validate:"max=35" localeKey:"wallet::transfer::recipient_reference_note"`
 }
 
 type TransferResponse struct {
@@ -41,8 +42,9 @@ func (h *WalletHandler) Transfer(ec echo.Context) error {
 	}
 
 	walletTransfer, err := walletSvc.Transfer(ctx, models.WalletTransferParams{
-		RecipientUserID: recipientUserID,
-		Amount:          transferRequest.Amount,
+		RecipientUserID:        recipientUserID,
+		Amount:                 transferRequest.Amount,
+		RecipientReferenceNote: transferRequest.RecipientReferenceNote,
 	})
 	if err != nil {
 		return err

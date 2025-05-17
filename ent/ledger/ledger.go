@@ -21,6 +21,8 @@ const (
 	FieldAmount = "amount"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldRecipientReferenceNote holds the string denoting the recipient_reference_note field in the database.
+	FieldRecipientReferenceNote = "recipient_reference_note"
 	// FieldTransactionType holds the string denoting the transaction_type field in the database.
 	FieldTransactionType = "transaction_type"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -46,6 +48,7 @@ var Columns = []string{
 	FieldWalletID,
 	FieldAmount,
 	FieldDescription,
+	FieldRecipientReferenceNote,
 	FieldTransactionType,
 	FieldCreatedAt,
 	FieldUpdatedAt,
@@ -95,6 +98,11 @@ func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByDescription orders the results by the description field.
 func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
+}
+
+// ByRecipientReferenceNote orders the results by the recipient_reference_note field.
+func ByRecipientReferenceNote(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRecipientReferenceNote, opts...).ToFunc()
 }
 
 // ByTransactionType orders the results by the transaction_type field.

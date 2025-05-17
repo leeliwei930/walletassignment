@@ -25,6 +25,8 @@ type Ledger struct {
 	Amount int `json:"amount,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
+	// RecipientReferenceNote holds the value of the "recipient_reference_note" field.
+	RecipientReferenceNote *string `json:"recipient_reference_note,omitempty"`
 	// TransactionType holds the value of the "transaction_type" field.
 	TransactionType string `json:"transaction_type,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -64,7 +66,7 @@ func (*Ledger) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case ledger.FieldAmount:
 			values[i] = new(sql.NullInt64)
-		case ledger.FieldDescription, ledger.FieldTransactionType:
+		case ledger.FieldDescription, ledger.FieldRecipientReferenceNote, ledger.FieldTransactionType:
 			values[i] = new(sql.NullString)
 		case ledger.FieldCreatedAt, ledger.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -108,6 +110,13 @@ func (l *Ledger) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
 				l.Description = value.String
+			}
+		case ledger.FieldRecipientReferenceNote:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field recipient_reference_note", values[i])
+			} else if value.Valid {
+				l.RecipientReferenceNote = new(string)
+				*l.RecipientReferenceNote = value.String
 			}
 		case ledger.FieldTransactionType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -176,6 +185,11 @@ func (l *Ledger) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(l.Description)
+	builder.WriteString(", ")
+	if v := l.RecipientReferenceNote; v != nil {
+		builder.WriteString("recipient_reference_note=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("transaction_type=")
 	builder.WriteString(l.TransactionType)

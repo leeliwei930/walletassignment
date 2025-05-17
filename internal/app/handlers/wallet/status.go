@@ -9,6 +9,10 @@ import (
 	"github.com/leeliwei930/walletassignment/internal/app/response"
 )
 
+type StatusResponse struct {
+	Wallet *models.WalletStatus `json:"wallet"`
+}
+
 func (h *WalletHandler) Status(ec echo.Context) error {
 	ctx := ec.Request().Context()
 	responder := response.NewResponder(ec, h.app)
@@ -29,5 +33,7 @@ func (h *WalletHandler) Status(ec echo.Context) error {
 		return responder.UnexpectedError(ec, err)
 	}
 
-	return responder.JSON(http.StatusOK, walletStatus)
+	return responder.JSON(http.StatusOK, StatusResponse{
+		Wallet: walletStatus,
+	})
 }
