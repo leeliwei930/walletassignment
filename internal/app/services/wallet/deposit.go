@@ -25,7 +25,7 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 	userID := appCtx.GetAuthUserID()
 	entClient := s.app.GetEnt()
 	locale := s.app.GetLocale()
-	ut := locale.GetTranslatorFromContext(ctx)
+	ut := locale.GetUT().GetFallback()
 
 	tx, err := entClient.Tx(ctx)
 	if err != nil {
