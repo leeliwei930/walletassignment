@@ -17,3 +17,9 @@ var IdenticalSourceAndDestinationTransferErr = NewInvalidRequestError(
 	"errors::wallet::transfer::identical_source_and_destination",
 	nil,
 )
+
+var InvalidTransferRecipientPhoneNumberErr = NewInvalidRequestError(
+	"ERR_TRANSFER_10002",
+	"errors::wallet::transfer::invalid_recipient_phone_number",
+	nil,
+)

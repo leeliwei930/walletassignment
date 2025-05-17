@@ -8,6 +8,7 @@ import (
 	pkgappcontext "github.com/leeliwei930/walletassignment/internal/app/context"
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	apperrors "github.com/leeliwei930/walletassignment/internal/errors"
+	"github.com/leeliwei930/walletassignment/pkg/formatter"
 )
 
 const (
@@ -55,7 +56,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 
 	sourceWallet, err := tx.Wallet.
 		Query().
-		Where(wallet.UserID(params.RecipientUserID)).
+		Where(wallet.UserID(authUserID)).
 		ForUpdate(sql.WithLockTables(wallet.Table)).
 		WithUser().
 		First(ctx)
@@ -70,6 +71,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 	destinationWallet, err := tx.Wallet.
 		Query().
 		Where(wallet.UserIDEQ(params.RecipientUserID)).
+		ForUpdate(sql.WithLockTables(wallet.Table)).
 		First(ctx)
 	if err != nil {
 		return nil, err
@@ -135,10 +137,22 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 		return nil, err
 	}
 
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	formattedSourceWalletBalance := formatter.FormatCurrencyAmount(
+		sourceWallet.Balance,
+		sourceWallet.CurrencyCode,
+		sourceWallet.DecimalPlaces,
+	)
 	return &models.WalletTransfer{
 		Wallet: models.WalletStatus{
-			ID:      sourceWallet.ID,
-			Balance: sourceWallet.Balance,
+			ID:               sourceWallet.ID,
+			Balance:          sourceWallet.Balance,
+			Currency:         sourceWallet.CurrencyCode,
+			FormattedBalance: formattedSourceWalletBalance,
 		},
 		Transaction: models.WalletTransaction{
 			ID:        sourceLedger.ID,
