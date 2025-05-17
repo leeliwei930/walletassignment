@@ -9,6 +9,8 @@ import (
 
 func (app *application) Routes(ec *echo.Echo) *echo.Echo {
 
+	ec.HTTPErrorHandler = handlers.ApplicationErrorHandler(app)
+
 	walletHandler := wallet.NewHandler(app)
 	handler := handlers.NewHandler(app)
 

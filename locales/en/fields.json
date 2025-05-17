@@ -1,0 +1,12 @@
+[
+	{
+		"key": "wallet::deposit::amount::label",
+		"trans": "amount",
+		"locale": "en"
+	},
+	{
+		"key": "wallet::deposit::amount",
+		"trans": "Deposit amount",
+		"locale": "en"
+	}
+]

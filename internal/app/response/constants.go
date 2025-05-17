@@ -6,6 +6,7 @@ const JSONEmptyBodyError = "request body must no be empty"
 const Unexpected = "unexpected error occurred"
 const BadRequestError = "bad request"
 const UnauthorizedError = "unauthorized"
+const ValidationError = "validation error"
 
 var errorCodes = map[string]string{
 	JSONSerializationError: "ERR_JSON_100",
@@ -13,4 +14,5 @@ var errorCodes = map[string]string{
 	BadRequestError:        "ERR_BAD_REQUEST_400",
 	Unexpected:             "ERR_UNEXPECTED_500",
 	UnauthorizedError:      "ERR_UNAUTHORIZED_401",
+	ValidationError:        "ERR_VALIDATION_422",
 }

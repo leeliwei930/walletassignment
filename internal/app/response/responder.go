@@ -6,8 +6,9 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
+	"github.com/leeliwei930/walletassignment/internal/errors"
 	"github.com/leeliwei930/walletassignment/internal/interfaces"
-	"github.com/pkg/errors"
+	pkgerrors "github.com/pkg/errors"
 )
 
 const JSON_DEFAULT_INDENT_FORMAT = "  "
@@ -43,7 +44,7 @@ func NewResponder(ec echo.Context, app interfaces.Application) *responder {
 
 func (h *responder) AbortIfIncorrectJsonPayload(ec echo.Context, err error) error {
 	if err != nil {
-		err = errors.WithStack(err)
+		err = pkgerrors.WithStack(err)
 		stackTraces := fmt.Sprintf("%+v", err)
 		stackTraces = strings.ReplaceAll(stackTraces, "\t", "  ")
 
@@ -60,7 +61,7 @@ func (h *responder) AbortIfIncorrectJsonPayload(ec echo.Context, err error) erro
 
 func (h *responder) UnexpectedError(ec echo.Context, err error) error {
 	if err != nil {
-		err = errors.WithStack(err)
+		err = pkgerrors.WithStack(err)
 		stackTraces := fmt.Sprintf("%+v", err)
 		stackTraces = strings.ReplaceAll(stackTraces, "\t", "  ")
 
@@ -77,7 +78,7 @@ func (h *responder) UnexpectedError(ec echo.Context, err error) error {
 
 func (h *responder) BadRequestError(ec echo.Context, err error) error {
 	if err != nil {
-		err = errors.WithStack(err)
+		err = pkgerrors.WithStack(err)
 		stackTraces := fmt.Sprintf("%+v", err)
 		stackTraces = strings.ReplaceAll(stackTraces, "\t", "  ")
 
@@ -90,6 +91,17 @@ func (h *responder) BadRequestError(ec echo.Context, err error) error {
 		)
 	}
 	return nil
+}
+
+func (h *responder) ValidationError(ec echo.Context, verr errors.ValidationError) error {
+
+	return h.ErrorJSON(
+		http.StatusBadRequest, ErrorResponse{
+			StatusCode: errorCodes[ValidationError],
+			Message:    verr.Message,
+			Fields:     verr.Errors,
+		},
+	)
 }
 
 func (h *responder) UnauthorizedError(ec echo.Context) error {

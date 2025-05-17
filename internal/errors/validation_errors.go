@@ -20,11 +20,13 @@ func NewValidationError(errs validator.ValidationErrors, ut ut.Translator) *Vali
 	for _, err := range errs {
 		localized := err.Translate(ut)
 		localizedFieldName, _ := ut.T(err.Field())
+		localizedFieldKey, _ := ut.T(err.Field() + "::label")
 		localized = strings.Replace(localized, err.Field(), localizedFieldName, 1)
+
 		if strings.Contains(ut.Locale(), "en") {
-			errorBag[err.Field()] = strings.ToUpper(localized[:1]) + localized[1:]
+			errorBag[localizedFieldKey] = strings.ToUpper(localized[:1]) + localized[1:]
 		} else {
-			errorBag[err.Field()] = localized
+			errorBag[err.StructField()] = localized
 		}
 	}
 
