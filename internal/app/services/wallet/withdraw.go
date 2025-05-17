@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/leeliwei930/walletassignment/ent/wallet"
 	"github.com/leeliwei930/walletassignment/internal/app/models"
-	"github.com/leeliwei930/walletassignment/internal/errors"
+	apperrors "github.com/leeliwei930/walletassignment/internal/errors"
 	"github.com/leeliwei930/walletassignment/pkg/formatter"
 )
 
@@ -21,6 +21,12 @@ func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdr
 	if err != nil {
 		return nil, err
 	}
+	// Ensure transaction is rolled back on error
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
 
 	walletRec, err := tx.Wallet.
 		Query().
@@ -29,11 +35,11 @@ func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdr
 		WithUser().
 		First(ctx)
 	if err != nil {
-		return nil, tx.Rollback()
+		return nil, err
 	}
 
 	if walletRec.Balance < params.Amount {
-		return nil, errors.InsuficcientBalanceWithdrawalErr
+		return nil, apperrors.InsuficcientBalanceWithdrawalErr
 	}
 
 	userRec := walletRec.Edges.User
@@ -44,7 +50,7 @@ func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdr
 		Save(ctx)
 
 	if err != nil {
-		return nil, tx.Rollback()
+		return nil, err
 	}
 
 	locale := s.app.GetLocale()
@@ -61,7 +67,7 @@ func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdr
 		SetCreatedAt(walletRec.UpdatedAt).
 		Save(ctx)
 	if err != nil {
-		return nil, tx.Rollback()
+		return nil, err
 	}
 
 	err = tx.Commit()

@@ -9,7 +9,6 @@ import (
 	"github.com/leeliwei930/walletassignment/internal/errors"
 
 	"github.com/leeliwei930/walletassignment/internal/interfaces"
-	pkgerrors "github.com/pkg/errors"
 )
 
 func ApplicationErrorHandler(app interfaces.Application) echo.HTTPErrorHandler {
@@ -34,8 +33,8 @@ func ApplicationErrorHandler(app interfaces.Application) echo.HTTPErrorHandler {
 			validationErr := errors.NewValidationError(verr, ut)
 
 			_ = responder.ValidationError(ec, *validationErr)
-		} else if pkgerrors.Is(err, &errors.InvalidRequestError{}) {
-			_ = responder.BadRequestError(ec, err)
+		} else if invalidReqErr, ok := err.(*errors.InvalidRequestError); ok {
+			_ = responder.BadRequestError(ec, invalidReqErr)
 		} else {
 			_ = responder.UnexpectedError(ec, err)
 		}

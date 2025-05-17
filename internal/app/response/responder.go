@@ -78,15 +78,12 @@ func (h *responder) UnexpectedError(ec echo.Context, err error) error {
 
 func (h *responder) BadRequestError(ec echo.Context, err error) error {
 	if err != nil {
-		err = pkgerrors.WithStack(err)
-		stackTraces := fmt.Sprintf("%+v", err)
-		stackTraces = strings.ReplaceAll(stackTraces, "\t", "  ")
-
-		if (pkgerrors.Is(err, &errors.InvalidRequestError{})) {
+		if _, ok := err.(*errors.InvalidRequestError); ok {
 			req := ec.Request()
 			locale := h.App.GetLocale()
 			ut := locale.GetTranslatorFromRequest(req)
-			message, _ := ut.T(err.(errors.InvalidRequestError).Description)
+			invalidReqErr := err.(*errors.InvalidRequestError)
+			message, _ := ut.T(invalidReqErr.Description)
 			return h.ErrorJSON(
 				http.StatusBadRequest, ErrorResponse{
 					StatusCode: errorCodes[BadRequestError],
@@ -99,7 +96,6 @@ func (h *responder) BadRequestError(ec echo.Context, err error) error {
 			http.StatusBadRequest, ErrorResponse{
 				StatusCode: errorCodes[BadRequestError],
 				Message:    err.Error(),
-				StackTrace: strings.Split(stackTraces, "\n"),
 			},
 		)
 	}

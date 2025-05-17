@@ -8,5 +8,25 @@
 		"key": "wallet::deposit::amount",
 		"trans": "Deposit amount",
 		"locale": "en"
+	},
+	{
+		"key": "wallet::transfer::amount",
+		"trans": "Transfer amount",
+		"locale": "en"
+	},
+	{
+		"key": "wallet::transfer::amount::label",
+		"trans": "amount",
+		"locale": "en"
+	},
+	{
+		"key": "wallet::transfer::recipient_phone_number",
+		"trans": "Recipient phone number",
+		"locale": "en"
+	},
+	{
+		"key": "wallet::transfer::recipient_phone_number::label",
+		"trans": "recipient_phone_number",
+		"locale": "en"
 	}
 ]
