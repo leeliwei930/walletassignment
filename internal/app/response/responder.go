@@ -66,7 +66,7 @@ func (h *responder) UnexpectedError(ec echo.Context, err error) error {
 		stackTraces = strings.ReplaceAll(stackTraces, "\t", "  ")
 
 		return h.ErrorJSON(
-			http.StatusUnprocessableEntity, ErrorResponse{
+			http.StatusInternalServerError, ErrorResponse{
 				StatusCode: errorCodes[Unexpected],
 				Message:    err.Error(),
 				StackTrace: strings.Split(stackTraces, "\n"),
@@ -81,6 +81,19 @@ func (h *responder) BadRequestError(ec echo.Context, err error) error {
 		err = pkgerrors.WithStack(err)
 		stackTraces := fmt.Sprintf("%+v", err)
 		stackTraces = strings.ReplaceAll(stackTraces, "\t", "  ")
+
+		if (pkgerrors.Is(err, &errors.InvalidRequestError{})) {
+			req := ec.Request()
+			locale := h.App.GetLocale()
+			ut := locale.GetTranslatorFromRequest(req)
+			message, _ := ut.T(err.(errors.InvalidRequestError).Description)
+			return h.ErrorJSON(
+				http.StatusBadRequest, ErrorResponse{
+					StatusCode: errorCodes[BadRequestError],
+					Message:    message,
+				},
+			)
+		}
 
 		return h.ErrorJSON(
 			http.StatusBadRequest, ErrorResponse{

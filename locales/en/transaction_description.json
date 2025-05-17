@@ -3,5 +3,10 @@
 		"key": "wallet::deposit::trx::description",
 		"trans": "Deposit to {0}'s wallet",
 		"locale": "en"
+	},
+	{
+		"key": "wallet::withdraw::trx::description",
+		"trans": "Withdraw from {0}'s wallet",
+		"locale": "en"
 	}
 ]
