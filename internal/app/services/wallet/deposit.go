@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -23,9 +22,11 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 		return nil, err
 	}
 	userID := appCtx.GetAuthUserID()
+
 	entClient := s.app.GetEnt()
 	locale := s.app.GetLocale()
 	ut := locale.GetUT().GetFallback()
+	userSvc := s.app.GetUserService()
 
 	tx, err := entClient.Tx(ctx)
 	if err != nil {
@@ -37,7 +38,8 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 		return nil, err
 	}
 
-	trxDescription, _ := ut.T(TRX_TYPE_DESCRIPTION_LOCALE_KEY, fmt.Sprintf("%s %s", userRec.LastName, userRec.FirstName))
+	userFullName := userSvc.GetFullName(ctx, userRec)
+	trxDescription, _ := ut.T(TRX_TYPE_DESCRIPTION_LOCALE_KEY, userFullName)
 
 	// retrieve current wallet
 	wallet, err := tx.Wallet.

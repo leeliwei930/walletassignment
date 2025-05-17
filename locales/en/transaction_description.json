@@ -1,7 +1,7 @@
 [
 	{
 		"key": "wallet::deposit::trx::description",
-		"trans": "Deposit to {0} Wallet",
+		"trans": "Deposit to {0}'s wallet",
 		"locale": "en"
 	}
 ]
