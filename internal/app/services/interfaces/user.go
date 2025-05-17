@@ -11,4 +11,5 @@ type UserService interface {
 	GetUserIDByPhone(ctx context.Context, phone string) (uuid.UUID, error)
 	GetFullName(ctx context.Context, userRec *ent.User) string
 	SetupUser(ctx context.Context, phone string, firstName string, lastName string) (*ent.User, error)
+	GetUserByID(ctx context.Context, userID uuid.UUID) (*ent.User, error)
 }

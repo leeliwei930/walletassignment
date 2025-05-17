@@ -17,8 +17,8 @@ type WalletWithdrawalParams struct {
 }
 
 type WalletTransferParams struct {
-	UserID uuid.UUID
-	Amount int
+	RecipientUserID uuid.UUID
+	Amount          int
 }
 
 type WalletTransactionsParams struct {

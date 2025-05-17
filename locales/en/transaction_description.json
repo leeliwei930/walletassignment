@@ -8,5 +8,15 @@
 		"key": "wallet::withdraw::trx::description",
 		"trans": "Withdraw from {0}'s wallet",
 		"locale": "en"
+	},
+	{
+		"key": "wallet::transfer::out::description",
+		"trans": "Transfer to {0}'s wallet",
+		"locale": "en"
+	},
+	{
+		"key": "wallet::transfer::in::description",
+		"trans": "Transfer from {0}'s wallet",
+		"locale": "en"
 	}
 ]

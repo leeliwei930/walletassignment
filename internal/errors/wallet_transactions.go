@@ -5,3 +5,15 @@ var InsuficcientBalanceWithdrawalErr = NewInvalidRequestError(
 	"errors::wallet::withdraw::insufficient_balance",
 	nil,
 )
+
+var InsufficientBalanceTransferErr = NewInvalidRequestError(
+	"ERR_TRANSFER_10003",
+	"errors::wallet::transfer::insufficient_balance",
+	nil,
+)
+
+var IdenticalSourceAndDestinationTransferErr = NewInvalidRequestError(
+	"ERR_TRANSFER_10001",
+	"errors::wallet::transfer::identical_source_and_destination",
+	nil,
+)
