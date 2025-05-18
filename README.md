@@ -22,7 +22,7 @@ Authentication will be handled by including an `X-USER-PHONE` header in API requ
    2. **Data Integrity**: While the hybrid approach optimizes performance, it introduces potential data integrity challenges. In a production environment, daily reconciliation processes would be necessary to ensure ledger-computed balances match the recorded wallet balances.
 
 ### Caching Strategy and performance tuning
-At the moment caching will not be implemented part of this assignment as due to tight deadline of the assignment that require me to setup the entire MVC structure from scratch take sometimes to test and validate, therefore I will suggest the key area that can perform caching
+At the moment caching will not be implemented part of this assignment as due to tight deadline of the assignment that require me to setup the entire MVC structure from scratch take sometimes to test and validate, therefore I acknowledge that the current assignment is not perfetch and the key area to improve the performance using caching are
 
 1. Caching on phone number map to user id, reduce the query load towards users table just to lookup specific user ID TTL suggest to be 30 mins, as data is unlikely to change
 2. Caching on recipient phone number to user id, this help when making transfer to specific user phone number twice result in cache hit, reduce the time to lookup recipient user id, TTL suggest to be 30 mins
@@ -30,10 +30,12 @@ as data is unlikely to change
 
 ## Project Structure
 For code reviewers the key areas to review are
-`ent/schema` : Contains each entity schema rules that generate the migrations in `db/migrations`
-`services/wallet`: Contains the logic of the wallet transaction
-`errors`: Contains error code for each error return in wallet service
-`internal/app/routes.go`: Contains each endpoint and it specific handler
+| Directory/File           | Description                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------- |
+| `ent/schema`             | Contains each entity schema rules that generate the migrations in `db/migrations` |
+| `services/wallet`        | Contains the logic of the wallet transaction                                      |
+| `errors`                 | Contains error code for each error return in wallet service                       |
+| `internal/app/routes.go` | Contains each endpoint and it specific handler                                    |
 
 ## Docs Structure
 `docs/scenarios`
@@ -68,17 +70,18 @@ docker compose up -d
 CGO_ENABLED=0 go build -o build/bin/wallet_service
 ```
 
-4. Run the migrations
+4. Run the migrations to create table on postgres db
 ```bash
 ./build/bin/wallet_service db migrate
 ```
 
 6. Run the server
+The API server will be running on http://localhost:8009
 ```bash
 ./build/bin/wallet_service serve
 ```
 
-7. To create test user with their wallet feel free to use the command as below
+7. Prepare a new test users as below, suggest to create two user to simulate the transfer
 ```bash
 ./build/bin/wallet_service user create -f "Li Wei" -l "Lee" -p "+6018129033"
 2025-05-18T22:16:03.070+0800    INFO    User created successfully       {"user": "User(id=2b2e38a8-0f60-4872-99c3-95463c34d120, first_name=Li Wei, last_name=Lee, phone_number=+6018129033, created_at=Sun May 18 22:16:03 2025, updated_at=Sun May 18 22:16:03 2025)"}
