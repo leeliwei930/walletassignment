@@ -31,12 +31,11 @@ func (locale *localeTranslator) GetTranslatorFromRequest(r *http.Request) univer
 const AcceptLang string = "accept_lang"
 
 func (locale *localeTranslator) GetTranslatorFromContext(ctx context.Context) universalTranslator.Translator {
-	appCtx, err := pkgappcontext.GetApplicationContext(ctx)
-	if err != nil {
-		return nil
+	lang := ""
+	if appCtx, err := pkgappcontext.GetApplicationContext(ctx); err == nil {
+		lang = appCtx.GetLanguage()
 	}
 
-	lang := appCtx.GetLanguage()
 	translator, found := locale.Translator.GetTranslator(lang)
 	if !found || lang == "" {
 		return locale.Translator.GetFallback()

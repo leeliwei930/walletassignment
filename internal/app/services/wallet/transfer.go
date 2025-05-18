@@ -5,7 +5,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/leeliwei930/walletassignment/ent/wallet"
-	pkgappcontext "github.com/leeliwei930/walletassignment/internal/app/context"
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	apperrors "github.com/leeliwei930/walletassignment/internal/errors"
 	"github.com/leeliwei930/walletassignment/pkg/formatter"
@@ -27,14 +26,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 	ut := locale.GetTranslatorFromContext(ctx)
 	systemUT := locale.GetUT().GetFallback()
 
-	appCtx, err := pkgappcontext.GetApplicationContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	authUserID := appCtx.GetAuthUserID()
-
-	if params.RecipientUserID == authUserID {
+	if params.SenderUserID == params.RecipientUserID {
 		return nil, apperrors.IdenticalSourceAndDestinationTransferErr
 	}
 
@@ -56,7 +48,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 
 	sourceWallet, err := tx.Wallet.
 		Query().
-		Where(wallet.UserID(authUserID)).
+		Where(wallet.UserID(params.SenderUserID)).
 		ForUpdate(sql.WithLockTables(wallet.Table)).
 		WithUser().
 		First(ctx)
@@ -65,7 +57,8 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 	}
 
 	if sourceWallet.Balance < params.Amount {
-		return nil, apperrors.InsufficientBalanceTransferErr
+		err = apperrors.InsufficientBalanceTransferErr
+		return nil, err
 	}
 
 	destinationWallet, err := tx.Wallet.
@@ -115,7 +108,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 		return nil, err
 	}
 
-	sender, err := userSvc.GetUserByID(ctx, authUserID)
+	sender, err := userSvc.GetUserByID(ctx, params.SenderUserID)
 	if err != nil {
 		return nil, err
 	}

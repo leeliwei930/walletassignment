@@ -17,6 +17,7 @@ type WalletWithdrawalParams struct {
 }
 
 type WalletTransferParams struct {
+	SenderUserID           uuid.UUID
 	RecipientUserID        uuid.UUID
 	RecipientReferenceNote string
 	Amount                 int

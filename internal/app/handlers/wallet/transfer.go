@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/leeliwei930/walletassignment/ent"
+	pkgappcontext "github.com/leeliwei930/walletassignment/internal/app/context"
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	"github.com/leeliwei930/walletassignment/internal/app/response"
 	"github.com/leeliwei930/walletassignment/internal/errors"
@@ -31,6 +32,12 @@ func (h *WalletHandler) Transfer(ec echo.Context) error {
 		return responder.AbortIfIncorrectJsonPayload(ec, err)
 	}
 
+	appCtx, err := pkgappcontext.GetApplicationContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	authUserID := appCtx.GetAuthUserID()
 	walletSvc := app.GetWalletService()
 	userSvc := app.GetUserService()
 
@@ -42,6 +49,7 @@ func (h *WalletHandler) Transfer(ec echo.Context) error {
 	}
 
 	walletTransfer, err := walletSvc.Transfer(ctx, models.WalletTransferParams{
+		SenderUserID:           authUserID,
 		RecipientUserID:        recipientUserID,
 		Amount:                 transferRequest.Amount,
 		RecipientReferenceNote: transferRequest.RecipientReferenceNote,
