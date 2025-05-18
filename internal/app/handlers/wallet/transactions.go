@@ -14,6 +14,11 @@ type WalletTransactionsResponse struct {
 	Pagination *models.Pagination          `json:"pagination"`
 }
 
+type WalletTransactionsRequest struct {
+	Limit int `json:"limit" validate:"omitempty,min=1,max=100" localeKey:"wallet::transactions::limit"`
+	Page  int `json:"page" validate:"omitempty,min=1" localeKey:"wallet::transactions::page"`
+}
+
 func (h *WalletHandler) GetTransactions(c echo.Context) error {
 	app := h.app
 	ctx := c.Request().Context()
@@ -35,6 +40,15 @@ func (h *WalletHandler) GetTransactions(c echo.Context) error {
 	if c.QueryParams().Has("page") {
 		pageStr := c.QueryParam("page")
 		page, _ = strconv.Atoi(pageStr)
+	}
+
+	request := WalletTransactionsRequest{
+		Limit: limit,
+		Page:  page,
+	}
+	validator := app.GetValidator()
+	if err := validator.Struct(request); err != nil {
+		return err
 	}
 
 	wallestSvc := app.GetWalletService()

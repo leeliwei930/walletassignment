@@ -73,16 +73,16 @@ components:
           example: 1
         totalPages:
           type: integer
-          example: 5
+          example: 1
         totalItems:
           type: integer
-          example: 50
-        limit:
+          example: 1
+        itemsPerPage:
           type: integer
-          example: 10
+          example: 1
         hasNext:
           type: boolean
-          example: true
+          example: false
         hasPrev:
           type: boolean
           example: false
@@ -340,15 +340,12 @@ paths:
           in: query
           schema:
             type: integer
-            minimum: 1
             default: 1
           description: Page number for pagination
         - name: limit
           in: query
           schema:
             type: integer
-            minimum: 1
-            maximum: 100
             default: 10
           description: Number of items per page
       responses:
@@ -367,17 +364,17 @@ paths:
                     $ref: '#/components/schemas/PaginationInfo'
               example:
                 data:
-                  - id: "05c31cfa-c671-4b8f-9c25-77296d56d2ed"
-                    amount: 100
-                    type: "deposit"
-                    description: "Deposit to Wallet"
-                    timestamp: "2024-03-20T10:00:00Z"
+                  - id: "2416ccf6-9613-4c82-88b4-f42fb77a9b92"
+                    amount: 12000
+                    type: "transfer_in"
+                    recipientReferenceNote: "Payment for lunch"
+                    timestamp: "2025-05-17T23:41:59.67526+08:00"
                 pagination:
                   currentPage: 1
-                  totalPages: 5
-                  totalItems: 50
-                  limit: 10
-                  hasNext: true
+                  totalPages: 1
+                  totalItems: 1
+                  itemsPerPage: 1
+                  hasNext: false
                   hasPrev: false
         '401':
           description: Unauthorized access

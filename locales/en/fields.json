@@ -48,5 +48,25 @@
 		"key": "wallet::transfer::recipient_reference_note::label",
 		"trans": "recipientReferenceNote",
 		"locale": "en"
+	},
+	{
+		"key": "wallet::transactions::limit",
+		"trans": "Limit",
+		"locale": "en"
+	},
+	{
+		"key": "wallet::transactions::page",
+		"trans": "Page",
+		"locale": "en"
+	},
+	{
+		"key": "wallet::transactions::limit::label",
+		"trans": "limit",
+		"locale": "en"
+	},
+	{
+		"key": "wallet::transactions::page::label",
+		"trans": "page",
+		"locale": "en"
 	}
 ]
