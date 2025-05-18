@@ -7,7 +7,6 @@ import (
 	"github.com/leeliwei930/walletassignment/ent"
 	"github.com/leeliwei930/walletassignment/ent/ledger"
 	"github.com/leeliwei930/walletassignment/ent/user"
-	pkgappcontext "github.com/leeliwei930/walletassignment/internal/app/context"
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	"github.com/leeliwei930/walletassignment/pkg/paginator"
 )
@@ -16,12 +15,6 @@ func (s *walletService) Transactions(ctx context.Context, params models.WalletTr
 
 	app := s.app
 	entClient := app.GetEnt()
-	appCtx, err := pkgappcontext.GetApplicationContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	authUserID := appCtx.GetAuthUserID()
 
 	limitAndOffSet := paginator.GetLimitAndOffSet(
 		paginator.WithLimit(ctx, params.Limit),
@@ -34,7 +27,7 @@ func (s *walletService) Transactions(ctx context.Context, params models.WalletTr
 			func(wq *ent.WalletQuery) {
 				wq.WithUser(
 					func(uq *ent.UserQuery) {
-						uq.Where(user.IDEQ(authUserID))
+						uq.Where(user.IDEQ(params.UserID))
 					},
 				)
 			},

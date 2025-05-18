@@ -8,6 +8,7 @@ import (
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	apperrors "github.com/leeliwei930/walletassignment/internal/errors"
 	"github.com/leeliwei930/walletassignment/pkg/formatter"
+	_ "github.com/leeliwei930/walletassignment/tests"
 )
 
 const (

@@ -8,6 +8,7 @@ import (
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	"github.com/leeliwei930/walletassignment/internal/errors"
 	"github.com/leeliwei930/walletassignment/internal/interfaces"
+	_ "github.com/leeliwei930/walletassignment/tests"
 	"github.com/stretchr/testify/suite"
 )
 
