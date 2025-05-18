@@ -20,7 +20,7 @@ const (
 func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdrawalParams) (*models.WalletWithdrawal, error) {
 	entClient := s.app.GetEnt()
 	locale := s.app.GetLocale()
-	ut := locale.GetTranslatorFromContext(ctx)
+	ut := locale.GetUT().GetFallback()
 
 	tx, err := entClient.BeginTx(ctx, nil)
 	if err != nil {
@@ -44,12 +44,14 @@ func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdr
 	}
 
 	if walletRec.Balance < params.Amount {
-		return nil, apperrors.InsuficcientBalanceWithdrawalErr
+		err = apperrors.InsuficcientBalanceWithdrawalErr
+		return nil, err
 	}
 
 	if params.Amount < MINIMUM_WITHDRAWAL_AMOUNT {
 		formattedAmount := formatter.FormatCurrencyAmount(MINIMUM_WITHDRAWAL_AMOUNT, walletRec.CurrencyCode, walletRec.DecimalPlaces)
-		return nil, apperrors.MinimumWithdrawalAmountRequiredErr(ut, formattedAmount)
+		err = apperrors.MinimumWithdrawalAmountRequiredErr(ut, formattedAmount)
+		return nil, err
 	}
 
 	userRec := walletRec.Edges.User

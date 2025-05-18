@@ -65,7 +65,7 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 	newBalance := wallet.Balance + params.Amount
 	walletRec, err := wallet.Update().SetBalance(newBalance).Save(ctx)
 	if err != nil {
-		return nil, tx.Rollback()
+		return nil, err
 	}
 
 	// create transactione in ledger
@@ -78,7 +78,7 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 		Save(ctx)
 
 	if err != nil {
-		return nil, tx.Rollback()
+		return nil, err
 	}
 
 	err = tx.Commit()
