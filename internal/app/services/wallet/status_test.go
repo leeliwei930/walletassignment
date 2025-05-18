@@ -20,9 +20,8 @@ type WalletStatusTestSuite struct {
 
 func (s *WalletStatusTestSuite) SetupTest() {
 	app, err := pkgapp.InitializeFromEnv()
-	if err != nil {
-		s.T().Fatal(err)
-	}
+	s.NoError(err)
+
 	s.app = app
 }
 

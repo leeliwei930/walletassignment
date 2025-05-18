@@ -39,11 +39,10 @@ func (app *application) UseRefreshDB(t *testing.T, fn func()) error {
 	app.db = drv.DB()
 	app.ent = database.BuildEntTestClient(t, drv)
 	defer func() {
-		ctx := context.Background()
+		_, _ = app.ent.Ledger.Delete().Exec(context.Background())
+		_, _ = app.ent.Wallet.Delete().Exec(context.Background())
+		_, _ = app.ent.User.Delete().Exec(context.Background())
 
-		_, _ = app.ent.Ledger.Delete().Exec(ctx)
-		_, _ = app.ent.Wallet.Delete().Exec(ctx)
-		_, _ = app.ent.User.Delete().Exec(ctx)
 		app.ent.Close()
 	}()
 

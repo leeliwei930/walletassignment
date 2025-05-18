@@ -26,10 +26,15 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 	ut := locale.GetUT().GetFallback()
 	userSvc := s.app.GetUserService()
 
-	tx, err := entClient.Tx(ctx)
+	tx, err := entClient.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
 
 	userRec, err := tx.User.Query().Where(user.ID(params.UserID)).First(ctx)
 	if err != nil {
@@ -52,7 +57,8 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 	// validate deposit amount
 	if params.Amount < MINIMUM_DEPOSIT_AMOUNT {
 		formattedAmount := formatter.FormatCurrencyAmount(MINIMUM_DEPOSIT_AMOUNT, wallet.CurrencyCode, wallet.DecimalPlaces)
-		return nil, errors.MinimumDepositAmountRequiredErr(ut, formattedAmount)
+		err = errors.MinimumDepositAmountRequiredErr(ut, formattedAmount)
+		return nil, err
 	}
 
 	// update wallet balance
