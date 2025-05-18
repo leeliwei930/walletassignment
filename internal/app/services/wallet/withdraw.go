@@ -13,6 +13,8 @@ import (
 const (
 	TRX_TYPE_WITHDRAW_DESCRIPTION_LOCALE_KEY = "wallet::withdraw::trx::description"
 	TRX_TYPE_WITHDRAW                        = "withdrawal"
+	// minimum withdrawal amount is 100 currency units
+	MINIMUM_WITHDRAWAL_AMOUNT = 100
 )
 
 func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdrawalParams) (*models.WalletWithdrawal, error) {
@@ -45,8 +47,8 @@ func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdr
 		return nil, apperrors.InsuficcientBalanceWithdrawalErr
 	}
 
-	if params.Amount < 100 {
-		formattedAmount := formatter.FormatCurrencyAmount(100, walletRec.CurrencyCode, walletRec.DecimalPlaces)
+	if params.Amount < MINIMUM_WITHDRAWAL_AMOUNT {
+		formattedAmount := formatter.FormatCurrencyAmount(MINIMUM_WITHDRAWAL_AMOUNT, walletRec.CurrencyCode, walletRec.DecimalPlaces)
 		return nil, apperrors.MinimumWithdrawalAmountRequiredErr(ut, formattedAmount)
 	}
 

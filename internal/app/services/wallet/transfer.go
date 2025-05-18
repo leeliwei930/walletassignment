@@ -16,6 +16,7 @@ const (
 	TRX_TYPE_TRANSFER_IN                         = "transfer_in"
 	TRX_TYPE_TRANSFER_OUT_DESCRIPTION_LOCALE_KEY = "wallet::transfer::out::description"
 	TRX_TYPE_TRANSFER_IN_DESCRIPTION_LOCALE_KEY  = "wallet::transfer::in::description"
+	MINIMUM_TRANSFER_AMOUNT                      = 100
 )
 
 func (s *walletService) Transfer(ctx context.Context, params models.WalletTransferParams) (*models.WalletTransfer, error) {
@@ -37,8 +38,8 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 		return nil, apperrors.IdenticalSourceAndDestinationTransferErr
 	}
 
-	if params.Amount < 100 {
-		formattedAmount := formatter.FormatCurrencyAmount(100, "USD", 2)
+	if params.Amount < MINIMUM_TRANSFER_AMOUNT {
+		formattedAmount := formatter.FormatCurrencyAmount(MINIMUM_TRANSFER_AMOUNT, "USD", 2)
 		return nil, apperrors.MinimumTransferAmountRequiredErr(ut, formattedAmount)
 	}
 

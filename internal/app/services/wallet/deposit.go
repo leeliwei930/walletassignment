@@ -12,8 +12,12 @@ import (
 	"github.com/leeliwei930/walletassignment/pkg/formatter"
 )
 
-const TRX_TYPE_DEPOSIT = "deposit"
-const TRX_TYPE_DESCRIPTION_LOCALE_KEY = "wallet::deposit::trx::description"
+const (
+	TRX_TYPE_DEPOSIT                = "deposit"
+	TRX_TYPE_DESCRIPTION_LOCALE_KEY = "wallet::deposit::trx::description"
+	// minimum deposit amount is 100 currency units
+	MINIMUM_DEPOSIT_AMOUNT = 100
+)
 
 func (s *walletService) Deposit(ctx context.Context, params models.WalletDepositParams) (*models.WalletDeposit, error) {
 
@@ -46,8 +50,8 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 	}
 
 	// validate deposit amount
-	if params.Amount < 100 {
-		formattedAmount := formatter.FormatCurrencyAmount(100, wallet.CurrencyCode, wallet.DecimalPlaces)
+	if params.Amount < MINIMUM_DEPOSIT_AMOUNT {
+		formattedAmount := formatter.FormatCurrencyAmount(MINIMUM_DEPOSIT_AMOUNT, wallet.CurrencyCode, wallet.DecimalPlaces)
 		return nil, errors.MinimumDepositAmountRequiredErr(ut, formattedAmount)
 	}
 
