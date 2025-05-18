@@ -18,7 +18,7 @@ type WalletTransaction struct {
 	Amount                 int       `json:"amount"`
 	Timestamp              time.Time `json:"timestamp"`
 	Type                   string    `json:"type,omitempty"`
-	RecipientReferenceNote string    `json:"recipientReferenceNote,omitempty"`
+	RecipientReferenceNote *string   `json:"recipientReferenceNote,omitempty"`
 }
 
 type WalletDeposit struct {
@@ -32,12 +32,12 @@ type WalletTransactions struct {
 }
 
 type Pagination struct {
-	CurrentPage int  `json:"currentPage"`
-	TotalPages  int  `json:"totalPages"`
-	TotalItems  int  `json:"totalItems"`
-	Limit       int  `json:"limit"`
-	HasNext     bool `json:"hasNext"`
-	HasPrev     bool `json:"hasPrev"`
+	CurrentPage  int  `json:"currentPage"`
+	TotalPages   int  `json:"totalPages"`
+	TotalItems   int  `json:"totalItems"`
+	ItemsPerPage int  `json:"itemsPerPage"`
+	HasNext      bool `json:"hasNext"`
+	HasPrev      bool `json:"hasPrev"`
 }
 
 type WalletWithdrawal struct {

@@ -151,7 +151,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 			Amount:                 sourceLedger.Amount,
 			Timestamp:              sourceLedger.CreatedAt,
 			Type:                   sourceLedger.TransactionType,
-			RecipientReferenceNote: *sourceLedger.RecipientReferenceNote,
+			RecipientReferenceNote: sourceLedger.RecipientReferenceNote,
 		},
 	}, nil
 }
