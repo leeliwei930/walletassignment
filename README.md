@@ -5,14 +5,18 @@ For this assignment, I will implement a simplified authentication approach. Sinc
 
 Authentication will be handled by including an `X-USER-PHONE` header in API requests. This header will identify which user is making the request, allowing the system to determine appropriate access permissions for wallet operations. This approach simulates user authentication without implementing complex security measures that would be required in a production environment.
 
+### Disclaimer
+To ensure floating point calculation error, cents is used as the smaller units of the currency, therefore
+when providing amount as input to each endpoint it should be in cents as example 100 cents indicate 1.00 dollar
+
 ### Entity relation
 1. **User-Wallet Relationship**: Each user has a primary wallet. The system is designed with a one-to-many relationship between users and wallets to support future extensibility (such as multi-currency wallets).
-   1. Currently, each user is limited to one primary wallet.
+   1. Currently, each user is limited to one primary wallet as to simplify the logic
 
 2. **Ledger System**: The `ledgers` table serves as a comprehensive audit trail for all wallet transaction activities, maintaining a complete history of financial movements.
 
 3. **Wallet Structure**: The wallet table stores essential information for each user-associated wallet:
-   - Current balance
+   - Current balance in cents
    - Currency type
    - Rounding precision (digits)
    
