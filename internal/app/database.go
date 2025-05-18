@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"errors"
+	"testing"
 
 	"github.com/leeliwei930/walletassignment/database"
 	"github.com/leeliwei930/walletassignment/database/migrator"
@@ -25,7 +26,7 @@ func (app *application) InitEntClient() error {
 	return nil
 }
 
-func (app *application) WrapRefreshDatabaseTransaction(ctx context.Context, fn func()) error {
+func (app *application) UseRefreshDB(t *testing.T, fn func()) error {
 	config := app.GetConfig().DBConfig
 	if config == nil {
 		return errors.New("DBConfig is not set in configuration")
@@ -36,20 +37,17 @@ func (app *application) WrapRefreshDatabaseTransaction(ctx context.Context, fn f
 	}
 
 	app.db = drv.DB()
+	app.ent = database.BuildEntTestClient(t, drv)
+	defer func() {
+		ctx := context.Background()
 
-	entClient := database.BuildEntClient(drv)
-
-	entTx, err := entClient.Tx(ctx)
-	if err != nil {
-		return err
-	}
-
-	app.ent = entTx.Client()
+		_, _ = app.ent.Ledger.Delete().Exec(ctx)
+		_, _ = app.ent.Wallet.Delete().Exec(ctx)
+		_, _ = app.ent.User.Delete().Exec(ctx)
+		app.ent.Close()
+	}()
 
 	fn()
-
-	_ = entTx.Rollback()
-	_ = app.InitEntClient()
 
 	return nil
 }

@@ -1,8 +1,8 @@
 package interfaces
 
 import (
-	"context"
 	"database/sql"
+	"testing"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/leeliwei930/walletassignment/config"
@@ -18,7 +18,7 @@ type Application interface {
 	GetDBMigrator() DBMigrator
 	GetLog() *zap.Logger
 	Close()
-	WrapRefreshDatabaseTransaction(ctx context.Context, fn func()) error
+	UseRefreshDB(t *testing.T, fn func()) error
 	GetLocale() Locale
 	GetUserService() svcinterfaces.UserService
 	GetWalletService() svcinterfaces.WalletService

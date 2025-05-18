@@ -29,7 +29,7 @@ func (s *userService) SetupUser(ctx context.Context, phoneNumber string, firstNa
 	_, err = tx.Wallet.Create().
 		SetUserID(user.ID).
 		SetBalance(0).
-		SetCurrencyCode("RM").
+		SetCurrencyCode("USD").
 		SetDecimalPlaces(2).
 		Save(ctx)
 	if err != nil {

@@ -2,10 +2,12 @@ package database
 
 import (
 	"database/sql"
+	"testing"
 
 	entSQL "entgo.io/ent/dialect/sql"
 	"github.com/leeliwei930/walletassignment/config"
 	"github.com/leeliwei930/walletassignment/ent"
+	"github.com/leeliwei930/walletassignment/ent/enttest"
 )
 
 const (
@@ -14,6 +16,14 @@ const (
 
 func BuildEntClient(drv *entSQL.Driver) *ent.Client {
 	entClient := ent.NewClient(ent.Driver(drv))
+
+	return entClient
+}
+
+func BuildEntTestClient(t *testing.T, drv *entSQL.Driver) *ent.Client {
+	entClient := enttest.NewClient(t, enttest.WithOptions(
+		ent.Driver(drv),
+	))
 
 	return entClient
 }
