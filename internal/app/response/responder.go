@@ -84,6 +84,9 @@ func (h *responder) BadRequestError(ec echo.Context, err error) error {
 			ut := locale.GetTranslatorFromRequest(req)
 			invalidReqErr := err.(*errors.InvalidRequestError)
 			message, _ := ut.T(invalidReqErr.Description)
+			if message == "" {
+				message = invalidReqErr.Description
+			}
 			return h.ErrorJSON(
 				http.StatusBadRequest, ErrorResponse{
 					ErrorCode: invalidReqErr.Code,

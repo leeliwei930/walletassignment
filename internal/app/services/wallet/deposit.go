@@ -8,6 +8,7 @@ import (
 	"github.com/leeliwei930/walletassignment/ent/user"
 	"github.com/leeliwei930/walletassignment/ent/wallet"
 	"github.com/leeliwei930/walletassignment/internal/app/models"
+	"github.com/leeliwei930/walletassignment/internal/errors"
 	"github.com/leeliwei930/walletassignment/pkg/formatter"
 )
 
@@ -42,6 +43,12 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 		First(ctx)
 	if err != nil {
 		return nil, err
+	}
+
+	// validate deposit amount
+	if params.Amount < 100 {
+		formattedAmount := formatter.FormatCurrencyAmount(100, wallet.CurrencyCode, wallet.DecimalPlaces)
+		return nil, errors.MinimumDepositAmountRequiredErr(ut, formattedAmount)
 	}
 
 	// update wallet balance

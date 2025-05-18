@@ -22,6 +22,10 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 
 	entClient := s.app.GetEnt()
 	userSvc := s.app.GetUserService()
+	locale := s.app.GetLocale()
+	ut := locale.GetTranslatorFromContext(ctx)
+	systemUT := locale.GetUT().GetFallback()
+
 	appCtx, err := pkgappcontext.GetApplicationContext(ctx)
 	if err != nil {
 		return nil, err
@@ -31,6 +35,11 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 
 	if params.RecipientUserID == authUserID {
 		return nil, apperrors.IdenticalSourceAndDestinationTransferErr
+	}
+
+	if params.Amount < 100 {
+		formattedAmount := formatter.FormatCurrencyAmount(100, "USD", 2)
+		return nil, apperrors.MinimumTransferAmountRequiredErr(ut, formattedAmount)
 	}
 
 	tx, err := entClient.BeginTx(ctx, nil)
@@ -84,9 +93,6 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 		return nil, err
 	}
 
-	locale := s.app.GetLocale()
-	ut := locale.GetUT().GetFallback()
-
 	recipient, err := userSvc.GetUserByID(ctx, params.RecipientUserID)
 	if err != nil {
 		return nil, err
@@ -94,7 +100,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 
 	recipientFullName := userSvc.GetFullName(ctx, recipient)
 
-	transferOutDescription, _ := ut.T(TRX_TYPE_TRANSFER_OUT_DESCRIPTION_LOCALE_KEY, recipientFullName)
+	transferOutDescription, _ := systemUT.T(TRX_TYPE_TRANSFER_OUT_DESCRIPTION_LOCALE_KEY, recipientFullName)
 	// ledger for source wallet
 	sourceLedger, err := tx.Ledger.Create().
 		SetWalletID(sourceWallet.ID).
@@ -114,7 +120,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 	}
 
 	senderFullName := userSvc.GetFullName(ctx, sender)
-	transferInDescription, _ := ut.T(TRX_TYPE_TRANSFER_IN_DESCRIPTION_LOCALE_KEY, senderFullName)
+	transferInDescription, _ := systemUT.T(TRX_TYPE_TRANSFER_IN_DESCRIPTION_LOCALE_KEY, senderFullName)
 
 	// ledger for destination wallet
 	_, err = tx.Ledger.Create().

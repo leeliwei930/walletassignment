@@ -17,6 +17,9 @@ const (
 
 func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdrawalParams) (*models.WalletWithdrawal, error) {
 	entClient := s.app.GetEnt()
+	locale := s.app.GetLocale()
+	ut := locale.GetTranslatorFromContext(ctx)
+
 	tx, err := entClient.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, err
@@ -42,6 +45,11 @@ func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdr
 		return nil, apperrors.InsuficcientBalanceWithdrawalErr
 	}
 
+	if params.Amount < 100 {
+		formattedAmount := formatter.FormatCurrencyAmount(100, walletRec.CurrencyCode, walletRec.DecimalPlaces)
+		return nil, apperrors.MinimumWithdrawalAmountRequiredErr(ut, formattedAmount)
+	}
+
 	userRec := walletRec.Edges.User
 
 	walletBalance := walletRec.Balance - params.Amount
@@ -53,12 +61,11 @@ func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdr
 		return nil, err
 	}
 
-	locale := s.app.GetLocale()
-	ut := locale.GetUT().GetFallback()
+	systemUT := locale.GetUT().GetFallback()
 	userSvc := s.app.GetUserService()
 	userFullName := userSvc.GetFullName(ctx, userRec)
 
-	description, _ := ut.T(TRX_TYPE_WITHDRAW_DESCRIPTION_LOCALE_KEY, userFullName)
+	description, _ := systemUT.T(TRX_TYPE_WITHDRAW_DESCRIPTION_LOCALE_KEY, userFullName)
 	ledgerRec, err := tx.Ledger.Create().
 		SetWalletID(walletRec.ID).
 		SetAmount(params.Amount).

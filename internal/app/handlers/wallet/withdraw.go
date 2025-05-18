@@ -10,7 +10,7 @@ import (
 )
 
 type WithdrawalRequest struct {
-	Amount int `json:"amount" validate:"required,min=1,max=1000000" localeKey:"wallet::withdraw::amount"`
+	Amount int `json:"amount" validate:"required" localeKey:"wallet::withdraw::amount"`
 }
 
 type WithdrawalResponse struct {

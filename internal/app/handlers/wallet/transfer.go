@@ -11,7 +11,7 @@ import (
 )
 
 type TransferRequest struct {
-	Amount                 int    `json:"amount" validate:"required,min=1,max=1000000" localeKey:"wallet::transfer::amount"`
+	Amount                 int    `json:"amount" validate:"required" localeKey:"wallet::transfer::amount"`
 	RecipientPhoneNumber   string `json:"recipientPhoneNumber" validate:"required" localeKey:"wallet::transfer::recipient_phone_number"`
 	RecipientReferenceNote string `json:"recipientReferenceNote" validate:"max=35" localeKey:"wallet::transfer::recipient_reference_note"`
 }

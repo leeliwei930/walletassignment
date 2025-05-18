@@ -182,10 +182,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                errorCode: "ERR_VALIDATION_422"
-                message: "The information you provided contains errors. Please review and correct it."
-                fields:
-                  amount: "Deposit amount must be 100 or greater"
+                errorCode: "ERR_DEPOSIT_10001"
+                message: "The minimum of USD 1.00 is required for deposit"
 
   /wallet/withdraw:
     post:
@@ -238,21 +236,25 @@ paths:
               examples:
                 insufficientBalance:
                   value:
-                    errorCode: "ERR_WITHDRAW_10001"
+                    errorCode: "ERR_WITHDRAW_10000"
                     message: "Unable to withdraw due to insufficient balance in wallet"
+                minimumWithdrawalAmountRequired:
+                  value:
+                    errorCode: "ERR_WITHDRAW_10001"
+                    message: "The minimum of USD 1.00 is required for withdrawal"
         '422':
-          description: Invalid withdrawal amount
+          description: Invalid Params
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                invalidAmount:
+                validationErrorExample:
                   value:
                     errorCode: "ERR_VALIDATION_422"
                     message: "The information you provided contains errors. Please review and correct it."
                     fields:
-                      amount: "Withdraw amount must be 1 or greater"
+                      amount: "Withdraw amount is required"
 
   /wallet/transfer:
     post:
@@ -315,19 +317,18 @@ paths:
                   value:
                     errorCode: "ERR_TRANSFER_10001"
                     message: "Recipient phone number must not be identical as sender"
+                invalidRecipientPhoneNumber:
+                  value:
+                    errorCode: "ERR_TRANSFER_10002"
+                    message: "Invalid recipient phone number"
                 insufficientBalance:
                   value:
                     errorCode: "ERR_TRANSFER_10003"
-                    message: "Insufficient balance for transfer"
-        '404':
-          description: Recipient not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                errorCode: "ERR_TRANSFER_10002"
-                message: "Invalid recipient phone number"
+                    message: "Unable to transfer due to insufficient balance in wallet"
+                minimumTransferAmountRequired:
+                  value:
+                    errorCode: "ERR_TRANSFER_10004"
+                    message: "The minimum of USD 1.00 is required for transfer"
 
   /wallet/transactions:
     get:

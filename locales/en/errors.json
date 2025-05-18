@@ -16,7 +16,7 @@
 	},
 	{
 		"locale": "en",
-		"key": "errors::wallet::withdraw::invalid_withdraw_amount",
+		"key": "errors::wallet::withdraw::minimum_withdrawal_amount_required",
 		"trans": "The minimum of {0} is required for withdrawal"
 	},
 	{

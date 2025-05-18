@@ -11,7 +11,7 @@ import (
 
 type DepositRequest struct {
 	// Minimum deposit amount is 1 USD and maximum is 10000 USD, value represent in cents
-	Amount int `json:"amount" validate:"required,min=100,max=1000000" localeKey:"wallet::deposit::amount"`
+	Amount int `json:"amount" validate:"required" localeKey:"wallet::deposit::amount"`
 }
 
 type DepositResponse struct {
