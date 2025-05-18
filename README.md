@@ -5,7 +5,6 @@ For this assignment, I will implement a simplified authentication approach. Sinc
 
 Authentication will be handled by including an `X-USER-PHONE` header in API requests. This header will identify which user is making the request, allowing the system to determine appropriate access permissions for wallet operations. This approach simulates user authentication without implementing complex security measures that would be required in a production environment.
 
-
 ### Entity relation
 1. **User-Wallet Relationship**: Each user has a primary wallet. The system is designed with a one-to-many relationship between users and wallets to support future extensibility (such as multi-currency wallets).
    1. Currently, each user is limited to one primary wallet.
@@ -81,7 +80,7 @@ The API server will be running on http://localhost:8009
 ./build/bin/wallet_service serve
 ```
 
-7. Prepare a new test users as below, suggest to create two user to simulate the transfer
+7. Prepare a new test users as below, suggest to create two user as to simulate the transfer
 ```bash
 ./build/bin/wallet_service user create -f "Li Wei" -l "Lee" -p "+6018129033"
 2025-05-18T22:16:03.070+0800    INFO    User created successfully       {"user": "User(id=2b2e38a8-0f60-4872-99c3-95463c34d120, first_name=Li Wei, last_name=Lee, phone_number=+6018129033, created_at=Sun May 18 22:16:03 2025, updated_at=Sun May 18 22:16:03 2025)"}
