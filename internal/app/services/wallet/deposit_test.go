@@ -3,6 +3,7 @@ package wallet_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/leeliwei930/walletassignment/ent"
@@ -10,18 +11,28 @@ import (
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	"github.com/leeliwei930/walletassignment/internal/errors"
 	"github.com/leeliwei930/walletassignment/internal/interfaces"
+	"github.com/leeliwei930/walletassignment/mocks/code.cloudfoundry.org/clock"
 	_ "github.com/leeliwei930/walletassignment/tests"
 	"github.com/stretchr/testify/suite"
 )
 
 type WalletDepositTestSuite struct {
 	suite.Suite
-	app interfaces.Application
+	app       interfaces.Application
+	clock     *clock.MockClock
+	fixedTime time.Time
 }
 
 func (s *WalletDepositTestSuite) SetupTest() {
 	app, err := pkgapp.InitializeFromEnv()
 	s.NoError(err)
+
+	s.clock = clock.NewMockClock(s.T())
+	s.fixedTime, err = time.Parse(time.RFC3339, "2025-05-19T10:00:00Z")
+	s.NoError(err)
+
+	s.clock.On("Now").Return(s.fixedTime).Maybe()
+	app.SetClock(s.clock)
 
 	s.app = app
 }
@@ -50,7 +61,7 @@ func (s *WalletDepositTestSuite) TestWalletDeposit_ShouldDepositCorrectAmountToU
 		s.Equal(10000, transaction.Amount)
 		s.Equal("deposit", transaction.Type)
 		s.Empty(transaction.RecipientReferenceNote)
-
+		s.Equal(s.fixedTime, transaction.Timestamp)
 	})
 	s.NoError(refreshDBErr)
 }

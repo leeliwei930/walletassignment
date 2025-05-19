@@ -3,6 +3,7 @@ package wallet_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/leeliwei930/walletassignment/ent"
@@ -10,17 +11,28 @@ import (
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	"github.com/leeliwei930/walletassignment/internal/errors"
 	"github.com/leeliwei930/walletassignment/internal/interfaces"
+	"github.com/leeliwei930/walletassignment/mocks/code.cloudfoundry.org/clock"
+	_ "github.com/leeliwei930/walletassignment/tests"
 	"github.com/stretchr/testify/suite"
 )
 
 type WalletWithdrawTestSuite struct {
 	suite.Suite
-	app interfaces.Application
+	app       interfaces.Application
+	clock     *clock.MockClock
+	fixedTime time.Time
 }
 
 func (s *WalletWithdrawTestSuite) SetupTest() {
 	app, err := pkgapp.InitializeFromEnv()
 	s.NoError(err)
+
+	s.clock = clock.NewMockClock(s.T())
+	s.fixedTime, err = time.Parse(time.RFC3339, "2025-05-19T10:00:00Z")
+	s.NoError(err)
+
+	s.clock.On("Now").Return(s.fixedTime).Maybe()
+	app.SetClock(s.clock)
 
 	s.app = app
 }
@@ -52,6 +64,7 @@ func (s *WalletWithdrawTestSuite) TestWalletWithdraw_ShouldWithdrawCorrectAmount
 		s.Equal(1000, withdrawResponse.Transaction.Amount)
 		s.Equal("withdrawal", withdrawResponse.Transaction.Type)
 		s.Empty(withdrawResponse.Transaction.RecipientReferenceNote)
+		s.Equal(s.fixedTime, withdrawResponse.Transaction.Timestamp)
 	})
 	s.NoError(refreshDBErr)
 }
@@ -128,6 +141,7 @@ func (s *WalletWithdrawTestSuite) TestWalletWithdraw_ShouldReturnError_WhenWithd
 	})
 	s.NoError(refreshDBErr)
 }
+
 func TestWalletWithdrawTestSuite(t *testing.T) {
 	suite.Run(t, new(WalletWithdrawTestSuite))
 }

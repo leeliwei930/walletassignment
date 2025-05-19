@@ -3,22 +3,33 @@ package wallet_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	pkgapp "github.com/leeliwei930/walletassignment/internal/app"
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 	"github.com/leeliwei930/walletassignment/internal/interfaces"
+	"github.com/leeliwei930/walletassignment/mocks/code.cloudfoundry.org/clock"
 	_ "github.com/leeliwei930/walletassignment/tests"
 	"github.com/stretchr/testify/suite"
 )
 
 type WalletTransactionsTestSuite struct {
 	suite.Suite
-	app interfaces.Application
+	app       interfaces.Application
+	clock     *clock.MockClock
+	fixedTime time.Time
 }
 
 func (s *WalletTransactionsTestSuite) SetupTest() {
 	app, err := pkgapp.InitializeFromEnv()
 	s.NoError(err)
+
+	s.clock = clock.NewMockClock(s.T())
+	s.fixedTime, err = time.Parse(time.RFC3339, "2025-05-19T10:00:00Z")
+	s.NoError(err)
+
+	s.clock.On("Now").Return(s.fixedTime).Maybe()
+	app.SetClock(s.clock)
 
 	s.app = app
 }
@@ -66,13 +77,16 @@ func (s *WalletTransactionsTestSuite) TestWalletTransactions_ShouldReturnCorrect
 		s.Equal(false, pagination.HasPrev)
 		s.Equal(2, pagination.TotalItems)
 
-		// Verify first transaction (withdrawal)
-		s.Equal(2000, transactions[0].Amount)
-		s.Equal("withdrawal", transactions[0].Type)
+		// Verify first transaction (deposit)
+		s.Equal(10000, transactions[0].Amount)
+		s.Equal("deposit", transactions[0].Type)
+		s.Equal(s.fixedTime, transactions[0].Timestamp.UTC())
 
-		// Verify second transaction (deposit)
-		s.Equal(10000, transactions[1].Amount)
-		s.Equal("deposit", transactions[1].Type)
+		// Verify second transaction (withdrawal)
+		s.Equal(2000, transactions[1].Amount)
+		s.Equal("withdrawal", transactions[1].Type)
+		s.Equal(s.fixedTime, transactions[1].Timestamp.UTC())
+
 	})
 	s.NoError(refreshDBErr)
 }
@@ -147,6 +161,11 @@ func (s *WalletTransactionsTestSuite) TestWalletTransactions_ShouldRespectPagina
 		s.Equal(true, pagination.HasNext)
 		s.Equal(false, pagination.HasPrev)
 
+		// Verify transaction timestamps
+		for _, transaction := range transactions {
+			s.Equal(s.fixedTime, transaction.Timestamp.UTC())
+		}
+
 		// Get second page
 		transactionsResponse, err = walletSvc.Transactions(ctx, models.WalletTransactionsParams{
 			UserID: user.ID,
@@ -165,6 +184,11 @@ func (s *WalletTransactionsTestSuite) TestWalletTransactions_ShouldRespectPagina
 		s.Equal(2, pagination.CurrentPage)
 		s.Equal(false, pagination.HasNext)
 		s.Equal(true, pagination.HasPrev)
+
+		// Verify transaction timestamps
+		for _, transaction := range transactions {
+			s.Equal(s.fixedTime, transaction.Timestamp.UTC())
+		}
 	})
 	s.NoError(refreshDBErr)
 }

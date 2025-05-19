@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/leeliwei930/walletassignment/internal/app"
+	_ "github.com/leeliwei930/walletassignment/tests"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -30,9 +30,6 @@ func (rts *RouteTestSuites) readResponse(res *http.Response) string {
 
 func (rts *RouteTestSuites) SetupTest() {
 	rts.client = &http.Client{}
-
-	err := godotenv.Load(".env.testing")
-	rts.NoError(err)
 
 	_app, err := app.InitializeFromEnv()
 	rts.NoError(err)
