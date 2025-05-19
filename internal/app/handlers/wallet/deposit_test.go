@@ -139,6 +139,37 @@ func (s *WalletDepositHandlerTestSuite) TestDeposit_ShouldReturnErrorWhenAmountI
 	s.Equal(http.StatusBadRequest, res.StatusCode)
 }
 
+func (s *WalletDepositHandlerTestSuite) TestDeposit_ShouldReturnErrorWhenAmountIsNotProvided() {
+	userUUID := uuid.MustParse("123e4567-e89b-12d3-a456-426614174000")
+	s.userSvc.EXPECT().GetUserIDByPhone(mock.Anything, "+60182119233").Return(userUUID, nil).Maybe()
+
+	payload := wallet.DepositRequest{}
+	payloadBytes, err := json.Marshal(payload)
+	s.NoError(err)
+
+	req, _ := http.NewRequest(
+		http.MethodPost,
+		fmt.Sprintf("%s/api/v1/wallet/deposit", s.srv.URL),
+		bytes.NewBuffer(payloadBytes),
+	)
+	req.Header.Set("X-USER-PHONE", "+60182119233")
+	req.Header.Set("Content-Type", "application/json")
+	res, err := s.client.Do(req)
+	s.NoError(err)
+
+	s.Equal(http.StatusUnprocessableEntity, res.StatusCode)
+
+	responseBody := map[string]interface{}{}
+	err = json.NewDecoder(res.Body).Decode(&responseBody)
+	s.NoError(err)
+
+	s.Equal("ERR_VALIDATION_422", responseBody["errorCode"])
+	s.Equal("The information you provided contains errors. Please review and correct it.", responseBody["message"])
+
+	errorFields := responseBody["fields"].(map[string]interface{})
+	s.Equal("Deposit amount is a required field", errorFields["amount"])
+}
+
 func TestWalletDepositHandlerTestSuite(t *testing.T) {
 	suite.Run(t, new(WalletDepositHandlerTestSuite))
 }
