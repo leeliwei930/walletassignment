@@ -1,0 +1,174 @@
+package wallet_test
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
+	"github.com/leeliwei930/walletassignment/internal/app"
+	"github.com/leeliwei930/walletassignment/internal/app/handlers/wallet"
+	"github.com/leeliwei930/walletassignment/internal/app/models"
+	svcinterfaces "github.com/leeliwei930/walletassignment/internal/app/services/interfaces"
+	"github.com/leeliwei930/walletassignment/internal/errors"
+	"github.com/leeliwei930/walletassignment/internal/interfaces"
+	"github.com/leeliwei930/walletassignment/mocks/code.cloudfoundry.org/clock"
+	_ "github.com/leeliwei930/walletassignment/tests"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/suite"
+)
+
+type WalletWithdrawHandlerTestSuite struct {
+	suite.Suite
+	client *http.Client
+	srv    *httptest.Server
+	app    interfaces.Application
+
+	clock     *clock.MockClock
+	fixedTime time.Time
+
+	walletSvc *svcinterfaces.MockWalletService
+	userSvc   *svcinterfaces.MockUserService
+}
+
+func (s *WalletWithdrawHandlerTestSuite) SetupTest() {
+	app, err := app.InitializeFromEnv()
+	s.NoError(err)
+
+	s.client = http.DefaultClient
+
+	s.clock = clock.NewMockClock(s.T())
+	s.fixedTime, err = time.Parse(time.RFC3339, "2025-05-19T10:00:00Z")
+	s.NoError(err)
+
+	s.clock.On("Now").Return(s.fixedTime).Maybe()
+	app.SetClock(s.clock)
+
+	s.walletSvc = svcinterfaces.NewMockWalletService(s.T())
+	s.userSvc = svcinterfaces.NewMockUserService(s.T())
+	app.SetWalletService(s.walletSvc)
+	app.SetUserService(s.userSvc)
+
+	ec := echo.New()
+	ec = app.Routes(ec)
+	ec = app.SetupMiddlewares(ec)
+	s.srv = httptest.NewServer(ec.Server.Handler)
+	s.app = app
+}
+
+func (s *WalletWithdrawHandlerTestSuite) TearDownTest() {
+	s.srv.Close()
+}
+
+func (s *WalletWithdrawHandlerTestSuite) TestWithdraw_ShouldCallTheWalletServiceWithdraw() {
+	userUUID := uuid.MustParse("123e4567-e89b-12d3-a456-426614174000")
+	walletUUID := uuid.MustParse("123e4567-e89b-12d3-a456-426614174001")
+	transactionUUID := uuid.MustParse("123e4567-e89b-12d3-a456-426614174002")
+
+	s.userSvc.EXPECT().GetUserIDByPhone(mock.Anything, "+60182119233").Return(userUUID, nil).Maybe()
+	s.walletSvc.EXPECT().Withdraw(mock.Anything, models.WalletWithdrawalParams{
+		UserID: userUUID,
+		Amount: 100,
+	}).Return(&models.WalletWithdrawal{
+		Wallet: models.WalletStatus{
+			ID:               walletUUID,
+			Balance:          100000,
+			Currency:         "USD",
+			FormattedBalance: "USD 100.00",
+		},
+		Transaction: models.WalletTransaction{
+			ID:        transactionUUID,
+			Amount:    100,
+			Type:      "withdrawal",
+			Timestamp: s.fixedTime,
+		},
+	}, nil).Once()
+
+	payload := wallet.WithdrawalRequest{
+		Amount: 100,
+	}
+	payloadBytes, err := json.Marshal(payload)
+	s.NoError(err)
+
+	req, _ := http.NewRequest(
+		http.MethodPost,
+		fmt.Sprintf("%s/api/v1/wallet/withdraw", s.srv.URL),
+		bytes.NewBuffer(payloadBytes),
+	)
+	req.Header.Set("X-USER-PHONE", "+60182119233")
+	req.Header.Set("Content-Type", "application/json")
+	res, err := s.client.Do(req)
+	s.NoError(err)
+
+	s.Equal(http.StatusOK, res.StatusCode)
+}
+
+func (s *WalletWithdrawHandlerTestSuite) TestWithdraw_ShouldReturnErrorWhenAmountIsLessThanMinimum() {
+	userUUID := uuid.MustParse("123e4567-e89b-12d3-a456-426614174000")
+
+	locale := s.app.GetLocale()
+	ut := locale.GetUT().GetFallback()
+	s.userSvc.EXPECT().GetUserIDByPhone(mock.Anything, "+60182119233").Return(userUUID, nil).Maybe()
+	s.walletSvc.EXPECT().Withdraw(mock.Anything, models.WalletWithdrawalParams{
+		UserID: userUUID,
+		Amount: 50,
+	}).Return(nil, errors.MinimumWithdrawalAmountRequiredErr(ut, "USD 1.00")).Once()
+
+	payload := wallet.WithdrawalRequest{
+		Amount: 50,
+	}
+	payloadBytes, err := json.Marshal(payload)
+	s.NoError(err)
+
+	req, _ := http.NewRequest(
+		http.MethodPost,
+		fmt.Sprintf("%s/api/v1/wallet/withdraw", s.srv.URL),
+		bytes.NewBuffer(payloadBytes),
+	)
+	req.Header.Set("X-USER-PHONE", "+60182119233")
+	req.Header.Set("Content-Type", "application/json")
+	res, err := s.client.Do(req)
+	s.NoError(err)
+
+	s.Equal(http.StatusBadRequest, res.StatusCode)
+}
+
+func (s *WalletWithdrawHandlerTestSuite) TestWithdraw_ShouldReturnErrorWhenAmountIsNotProvided() {
+	userUUID := uuid.MustParse("123e4567-e89b-12d3-a456-426614174000")
+	s.userSvc.EXPECT().GetUserIDByPhone(mock.Anything, "+60182119233").Return(userUUID, nil).Maybe()
+
+	payload := wallet.WithdrawalRequest{}
+	payloadBytes, err := json.Marshal(payload)
+	s.NoError(err)
+
+	req, _ := http.NewRequest(
+		http.MethodPost,
+		fmt.Sprintf("%s/api/v1/wallet/withdraw", s.srv.URL),
+		bytes.NewBuffer(payloadBytes),
+	)
+	req.Header.Set("X-USER-PHONE", "+60182119233")
+	req.Header.Set("Content-Type", "application/json")
+	res, err := s.client.Do(req)
+	s.NoError(err)
+
+	s.Equal(http.StatusUnprocessableEntity, res.StatusCode)
+
+	responseBody := map[string]interface{}{}
+	err = json.NewDecoder(res.Body).Decode(&responseBody)
+	s.NoError(err)
+
+	s.Equal("ERR_VALIDATION_422", responseBody["errorCode"])
+	s.Equal("The information you provided contains errors. Please review and correct it.", responseBody["message"])
+
+	errorFields := responseBody["fields"].(map[string]interface{})
+	s.Equal("Withdraw amount is a required field", errorFields["amount"])
+}
+
+func TestWalletWithdrawHandlerTestSuite(t *testing.T) {
+	suite.Run(t, new(WalletWithdrawHandlerTestSuite))
+}
