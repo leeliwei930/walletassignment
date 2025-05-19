@@ -1,4 +1,23 @@
 services:
+  walletsvc_server:
+    image: pawswinq-walletsvc:v1
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      
+    env_file:
+      - .env.walletsvc
+    ports:
+      - '8009:8009'
+    command: ["/app/walletsvc", "serve"]
+  walletsvc_server_migrate:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: pawswinq-walletsvc:v1
+    env_file:
+      - .env.walletsvc
+    command: ["/app/walletsvc" , "db", "migrate"]
   postgres:
     restart: 'always'
     image: postgres:15-alpine
