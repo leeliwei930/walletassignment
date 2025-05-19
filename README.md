@@ -57,7 +57,7 @@ Based on OAS standard v3.1, include the document of each API endpoint that is av
 | atlas         | DB migration tools that compatible with ent, provide versioning migrations to ent    |
 | validate      | First layer validation                                                               |
 
-## How to run
+## How to compile
 1. Copy the environment file from example
 ```bash
 cp .env.example .env
@@ -97,3 +97,27 @@ https://editor.swagger.io
 >
 > The provided user phone number will be injected to headers X-USER-PHONE as user impersonation
 
+
+## How to run (using docker)
+The docker file is already prepare, you can just run one single line command to get everyhing up and running in containers
+
+1. Start the migration containers to automatically run the db migration first to the postgres db
+```bash
+docker compose up -d postgres walletsvc_migrate
+```
+
+2. Start the server
+```bash
+docker compose up -d postgres walletsvc_server
+```
+
+3. Attach to contains shell session
+```bash
+docker compose up exec walletsvc_server /bin/sh
+```
+
+4. Prepare a new test users as below, suggest to create two user as to simulate the transfer
+```bash
+./walletsvc user create -f "Smith" -l "John" -p "+60182119033"
+# => 2025-05-19T14:13:36.071Z        INFO    User created successfully       {"user": "User(id=10414f51-d910-4cf5-9130-5aaade9a084b, first_name=Smith, # last_name=John, phone_number=+60182119033, created_at=Mon May 19 14:13:36 2025, updated_at=Mon May 19 14:13:36 2025)"}
+```
