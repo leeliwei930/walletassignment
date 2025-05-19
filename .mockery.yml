@@ -9,5 +9,14 @@ packages:
       inpackage: true
     interfaces:
       Application:
+  github.com/leeliwei930/walletassignment/internal/app/services/interfaces:
+    config:
+      dir: internal/app/services/interfaces
+      inpackage: true
+    interfaces:
+      WalletService:
+      UserService:
+
+
 
 
