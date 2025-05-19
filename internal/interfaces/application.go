@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"testing"
 
+	"code.cloudfoundry.org/clock"
 	"github.com/go-playground/validator/v10"
 	"github.com/leeliwei930/walletassignment/config"
 	"github.com/leeliwei930/walletassignment/ent"
@@ -23,4 +24,5 @@ type Application interface {
 	GetUserService() svcinterfaces.UserService
 	GetWalletService() svcinterfaces.WalletService
 	GetValidator() *validator.Validate
+	GetClock() clock.Clock
 }

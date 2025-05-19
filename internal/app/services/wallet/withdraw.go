@@ -22,6 +22,8 @@ func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdr
 	entClient := s.app.GetEnt()
 	locale := s.app.GetLocale()
 	ut := locale.GetUT().GetFallback()
+	clock := s.app.GetClock()
+	currentTime := clock.Now()
 
 	tx, err := entClient.BeginTx(ctx, nil)
 	if err != nil {
@@ -60,6 +62,7 @@ func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdr
 	walletBalance := walletRec.Balance - params.Amount
 	walletRec, err = walletRec.Update().
 		SetBalance(walletBalance).
+		SetUpdatedAt(currentTime).
 		Save(ctx)
 
 	if err != nil {
@@ -76,7 +79,7 @@ func (s *walletService) Withdraw(ctx context.Context, params models.WalletWithdr
 		SetAmount(params.Amount).
 		SetDescription(description).
 		SetTransactionType(TRX_TYPE_WITHDRAW).
-		SetCreatedAt(walletRec.UpdatedAt).
+		SetCreatedAt(currentTime).
 		Save(ctx)
 	if err != nil {
 		return nil, err

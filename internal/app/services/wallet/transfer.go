@@ -23,8 +23,10 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 	entClient := s.app.GetEnt()
 	userSvc := s.app.GetUserService()
 	locale := s.app.GetLocale()
+	clock := s.app.GetClock()
 	ut := locale.GetTranslatorFromContext(ctx)
 	systemUT := locale.GetUT().GetFallback()
+	currentTime := clock.Now()
 
 	if params.SenderUserID == params.RecipientUserID {
 		return nil, apperrors.IdenticalSourceAndDestinationTransferErr
@@ -75,6 +77,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 
 	sourceWallet, err = sourceWallet.Update().
 		SetBalance(sourceWalletBalance).
+		SetUpdatedAt(currentTime).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -82,6 +85,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 
 	destinationWallet, err = destinationWallet.Update().
 		SetBalance(destinationWalletBalance).
+		SetUpdatedAt(currentTime).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -102,7 +106,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 		SetDescription(transferOutDescription).
 		SetRecipientReferenceNote(params.RecipientReferenceNote).
 		SetTransactionType(TRX_TYPE_TRANSFER_OUT).
-		SetCreatedAt(sourceWallet.UpdatedAt).
+		SetCreatedAt(currentTime).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -123,7 +127,7 @@ func (s *walletService) Transfer(ctx context.Context, params models.WalletTransf
 		SetDescription(transferInDescription).
 		SetRecipientReferenceNote(params.RecipientReferenceNote).
 		SetTransactionType(TRX_TYPE_TRANSFER_IN).
-		SetCreatedAt(destinationWallet.UpdatedAt).
+		SetCreatedAt(currentTime).
 		Save(ctx)
 	if err != nil {
 		return nil, err

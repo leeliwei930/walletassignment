@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"context"
-	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/leeliwei930/walletassignment/ent/user"
@@ -69,7 +68,8 @@ func (s *walletService) Deposit(ctx context.Context, params models.WalletDeposit
 	}
 
 	// create transactione in ledger
-	currentTime := time.Now()
+	clock := s.app.GetClock()
+	currentTime := clock.Now()
 	ledgerRec, err := tx.Ledger.Create().SetWalletID(wallet.ID).
 		SetAmount(params.Amount).
 		SetDescription(trxDescription).

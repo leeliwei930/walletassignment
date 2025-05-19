@@ -3,6 +3,7 @@ package app
 import (
 	"database/sql"
 
+	"code.cloudfoundry.org/clock"
 	"github.com/go-playground/validator/v10"
 	"github.com/leeliwei930/walletassignment/config"
 	"github.com/leeliwei930/walletassignment/ent"
@@ -21,10 +22,13 @@ type application struct {
 	locale        interfaces.Locale
 	userService   svcinterfaces.UserService
 	walletService svcinterfaces.WalletService
+	clock         clock.Clock
 }
 
 func New() *application {
-	return &application{}
+	return &application{
+		clock: clock.NewClock(),
+	}
 }
 
 func (app *application) GetEnt() *ent.Client {

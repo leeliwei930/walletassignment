@@ -1,0 +1,13 @@
+with-expecter: true
+packages:
+  code.cloudfoundry.org/clock:
+    interfaces:
+      Clock:
+  github.com/leeliwei930/walletassignment/internal/interfaces:
+    config:
+      dir: internal/interfaces
+      inpackage: true
+    interfaces:
+      Application:
+
+
