@@ -32,6 +32,11 @@ func (h *WalletHandler) Transfer(ec echo.Context) error {
 		return responder.AbortIfIncorrectJsonPayload(ec, err)
 	}
 
+	validator := app.GetValidator()
+	if err := validator.Struct(transferRequest); err != nil {
+		return err
+	}
+
 	appCtx, err := pkgappcontext.GetApplicationContext(ctx)
 	if err != nil {
 		return err

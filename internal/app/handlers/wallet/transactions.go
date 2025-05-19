@@ -9,6 +9,11 @@ import (
 	"github.com/leeliwei930/walletassignment/internal/app/models"
 )
 
+const (
+	DEFAULT_LIMIT = 10
+	DEFAULT_PAGE  = 1
+)
+
 type WalletTransactionsResponse struct {
 	Data       []*models.WalletTransaction `json:"data"`
 	Pagination *models.Pagination          `json:"pagination"`
@@ -29,8 +34,8 @@ func (h *WalletHandler) GetTransactions(c echo.Context) error {
 
 	authUserID := appCtx.GetAuthUserID()
 
-	limit := 0
-	page := 0
+	limit := DEFAULT_LIMIT
+	page := DEFAULT_PAGE
 
 	if c.QueryParams().Has("limit") {
 		limitStr := c.QueryParam("limit")
